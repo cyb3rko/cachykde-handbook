@@ -1,0 +1,86 @@
+{
+  "policies": {
+    "AppAutoUpdate": false,
+    "AutofillAddressEnabled": false,
+    "AutofillCreditCardEnabled": false,
+    "DisabledCiphers": {
+      "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA": true,
+      "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA": true,
+      "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA": true,
+      "TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA": true,
+      "TLS_DHE_RSA_WITH_AES_128_CBC_SHA": true,
+      "TLS_DHE_RSA_WITH_AES_256_CBC_SHA": true,
+      "TLS_RSA_WITH_AES_128_GCM_SHA256": true,
+      "TLS_RSA_WITH_AES_256_GCM_SHA384": true,
+      "TLS_RSA_WITH_AES_128_CBC_SHA": true,
+      "TLS_RSA_WITH_AES_256_CBC_SHA": true,
+      "TLS_RSA_WITH_3DES_EDE_CBC_SHA": true
+    },
+    "DisablePocket": true,
+    "DisableSetDesktopBackground": true,
+    "HardwareAcceleration": true,
+    "LegacySameSiteCookieBehaviorEnabled": false,
+    "OfferToSaveLogins": false,
+    "PasswordManagerEnabled": false,
+    "PictureInPicture": {
+      "Enabled": false,
+      "Locked": true
+    },
+    "PromptForDownloadLocation": false,
+    "RequestedLocales": "de",
+    "Preferences": {
+      "browser.bookmarks.restore_default_bookmarks": {
+        "Value": false,
+        "Status": "locked"
+      },
+      "browser.bookmarks.showMobileBookmarks": {
+        "Value": true,
+        "Status": "locked"
+      },
+      "browser.translations.automaticallyPopup": {
+        "Value": false,
+        "Status": "locked"
+      },
+      "browser.translations.enable": {
+        "Value": false,
+        "Status": "locked"
+      },
+      "browser.translations.panelShown": {
+        "Value": false,
+        "Status": "locked"
+      },
+      "browser.urlbar.showSearchSuggestionsFirst": {
+        "Value": false,
+        "Status": "locked"
+      },
+      "dom.w3c_touch_events.enabled": {
+        "Value": 0,
+        "Status": "locked"
+      },
+      "media.eme.enabled": {
+        "Value": true,
+        "Status": "locked"
+      },
+      "privacy.clearOnShutdown.downloads": {
+        "Value": false,
+        "Status": "locked"
+      },
+      "privacy.clearOnShutdown.history": {
+        "Value": false,
+        "Status": "locked"
+      },
+      "privacy.resistFingerprinting": {
+        "Value": false,
+        "Status": "locked"
+      },
+      "webgl.disabled": {
+        "Value": false,
+        "Status": "locked"
+      },
+      "widget.gtk.native-context-menus": {
+        "Value": false,
+        "Status": "locked"
+      }
+    }
+  }
+}

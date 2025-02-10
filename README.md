@@ -13,6 +13,7 @@ System info: (CachyOS + KDE Plasma Wayland + fish shell)
   - [journalctl](#journalctl)
 - [Services](#services)
   - [SSH Session Keep-Alive](#ssh-session-keep-alive)
+  - [Java](#java)
 - [Applications](#applications)
   - [AppImages](#appimages)
   - [Cachy Browser](#cachy-browser)
@@ -88,6 +89,26 @@ Edit `/etc/ssh/ssh_config` and append:
 
 ```shell
 ServerAliveInterval 60
+```
+
+### Java
+
+To install the correct version do the following and install the requested version:
+
+```bash
+sudo pacman -Ss java | grep jdk
+```
+
+To switch between installed java versions use:
+
+```bash
+archlinux-java
+```
+
+Set the `JAVA_HOME` env variable with the following config in `~/.env`:
+
+```bash
+JAVA_HOME=/usr/lib/jvm/default
 ```
 
 ## Applications

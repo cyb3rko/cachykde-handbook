@@ -139,6 +139,9 @@ Install [abraunegg/onedrive](https://github.com/abraunegg/onedrive):
 yay onedrive-abraunegg
 ```
 
+- **d-compiler**: ldc
+- **d-runtime**: liblphobos
+
 To allow logging to `/var/log/onedrive`, do the following:
 
 ```shell

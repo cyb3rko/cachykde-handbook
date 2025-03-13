@@ -1,5 +1,6 @@
 function setabbreviations
-  abbr lsa "ls -la"
+  abbr ls "lla -l"
+  abbr lsd "lla -t -d"
   abbr wsensor "watch -d -n 1 sensors"
   abbr update "sudo pacman -Syu"
   abbr autoremove "sudo pacman -Rsn (pacman -Qtdq)"
@@ -7,7 +8,7 @@ function setabbreviations
 
   abbr jump "ssh root@jump.langen.cyb3rko"
   abbr oci-main "ssh niko@oci-main.cloud.cyb3rko"
-  abbr oci-router "ssh root@oci-router.cloud.cloud.cyb3rko"
+  abbr oci-router "ssh root@oci-router.cloud.cyb3rko"
 end
 
 function envsource

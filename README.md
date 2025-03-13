@@ -129,7 +129,16 @@ Restart the browser and find applied policies at `about:policies`.
 Custom configs not available with the centralized policy configuration:
 
 - `full-screen-api.warning.timeout`: 0 (disables the fullscreen popup)
+- `privacy.clearOnShutdown.cache`: false
+- `privacy.clearOnShutdown.downloads`: false
+- `privacy.clearOnShutdown.history`: false
+- `privacy.clearOnShutdown_v2.browsingHistoryAndDownloads`: false
+- `privacy.clearOnShutdown_v2.cache`: false
+- `privacy.clearOnShutdown_v2.cookiesAndStorage`: false
+- `privacy.clearOnShutdown_v2.historyFormDataAndDownloads`: false
+- `privacy.resistFingerprinting`: false (loosen fingerprinting resistance)
 - `reader.parse-on-load.enabled`: false (disables the simplified reader mode)
+- `webgl.disabled`: false (allows WebGL)
 
 ### OneDrive
 

@@ -37,6 +37,10 @@
         "Value": true,
         "Status": "locked"
       },
+      "browser.tabs.loadBookmarksInBackground": {
+        "Value": true,
+        "Status": "locked"
+      },
       "browser.translations.automaticallyPopup": {
         "Value": false,
         "Status": "locked"
@@ -61,19 +65,11 @@
         "Value": true,
         "Status": "locked"
       },
-      "privacy.clearOnShutdown.downloads": {
+      "media.videocontrols.picture-in-picture.enabled": {
         "Value": false,
         "Status": "locked"
       },
-      "privacy.clearOnShutdown.history": {
-        "Value": false,
-        "Status": "locked"
-      },
-      "privacy.resistFingerprinting": {
-        "Value": false,
-        "Status": "locked"
-      },
-      "webgl.disabled": {
+      "media.videocontrols.picture-in-picture.urlbar-button.enabled": {
         "Value": false,
         "Status": "locked"
       },

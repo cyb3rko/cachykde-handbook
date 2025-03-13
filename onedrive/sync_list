@@ -1,0 +1,16 @@
+!build/kotlin/*
+!.kotlin/*
+!venv/*
+!.venv/*
+!.gradle/*
+!.idea/libraries/*
+!.idea/caches/*
+!.cache/*
+!__pycache__/*
+!node_modules/*
+!.next/*
+!/Programming/Projects/Android/**/build/*
+!/Programming/Projects/Android/**/.cxx/*
+!/Programming/Projects/Web/**/build/*
+
+/Programming

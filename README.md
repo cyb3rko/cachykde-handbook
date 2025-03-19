@@ -1,6 +1,11 @@
-# CachyOS KDE Handbook
+# CachyOS KDE Handbook 🐧
 
-System info: (CachyOS + KDE Plasma Wayland + fish shell)
+System info: CachyOS + KDE Plasma Wayland + fish shell
+
+<a href="https://cachyos.org/"><img src="https://cachyos.org/_astro/logo.DVTdAJi6.svg" width="100"/></a> &emsp;
+<a href="https://kde.org/plasma-desktop"><img src="https://kde.org/stuff/clipart/logo/plasma-logo-colorful.svg" width="100"/></a> &emsp;
+<a href="https://wayland.freedesktop.org"><img src="https://upload.wikimedia.org/wikipedia/commons/9/99/Wayland_Logo.svg" width="100"/></a> &emsp;
+<a href="https://fishshell.com"><img src="https://avatars.githubusercontent.com/u/1828073" width="100"/></a>
 
 ---
 
@@ -29,7 +34,7 @@ System info: (CachyOS + KDE Plasma Wayland + fish shell)
 
 ### Large file and folder monitor
 
-Use the CLI tool ncdu for a simple overview of the largest files and folders.
+Simple overview of the largest files and folders:
 
 ```shell
 sudo pacman -S ncdu
@@ -38,7 +43,7 @@ ncdu /
 
 ### Find large files
 
-Find files in current directory with a specified minimum size (in this example 100 MB)
+Find files in current directory with a specified minimum size (in this example 100 MB):
 
 ```shell
 find . -type f -size +100M
@@ -46,7 +51,7 @@ find . -type f -size +100M
 
 ### Clean package manager caches
 
-call this to start interactive package manager cache clearing
+Call this to start interactive package manager cache clearing:
 
 ```shell
 yay -Sc
@@ -145,7 +150,7 @@ Custom configs not available with the centralized policy configuration:
 Install [abraunegg/onedrive](https://github.com/abraunegg/onedrive):
 
 ```shell
-yay onedrive-abraunegg
+yay -S onedrive-abraunegg
 ```
 
 - **d-compiler**: ldc

@@ -4,7 +4,8 @@ function setabbreviations
   abbr wsensor "watch -d -n 1 sensors"
   abbr update "sudo pacman -Syu"
   abbr autoremove "sudo pacman -Rsn (pacman -Qtdq)"
-  abbr remove "sudo pacman -Rs"
+  abbr install "sudo pacman -S"
+  abbr remove "sudo pacman -Rcns"
 
   abbr jump "ssh root@jump.langen.cyb3rko"
   abbr oci-main "ssh niko@oci-main.cloud.cyb3rko"

@@ -1,7 +1,7 @@
 {
 	"__webextOptionsSync": "Refined GitHub",
 	"actionUrl": "",
-	"customCSS": ".AppHeader-CopilotChat, .copilotPreview__container, #copilot-floating-button, a[href=\"/settings/copilot\"] {\n    display: none !important;\n}\na[href=\"/settings/enterprises\"], a[href^=\"/organizations/enterprise_plan\"] {\n    display: none !important;\n}",
+	"customCSS": ".AppHeader-CopilotChat, .copilotPreview__container, #copilot-floating-button, #blob-view-header-copilot-icon, a[href=\"/settings/copilot\"] {\n    display: none !important;\n}\na[href=\"/settings/enterprises\"], a[href^=\"/organizations/enterprise_plan\"] {\n    display: none !important;\n}",
 	"personalToken": "xxx",
 	"logging": false,
 	"logHTTP": false,
@@ -49,7 +49,6 @@
 	"feature:easy-toggle-commit-messages": false,
 	"feature:easy-toggle-files": true,
 	"feature:embed-gist-inline": false,
-	"feature:embed-gist-via-iframe": false,
 	"feature:emphasize-draft-pr-label": false,
 	"feature:esc-to-cancel": true,
 	"feature:esc-to-deselect-line": true,
@@ -195,5 +194,6 @@
 	"feature:view-last-pr-deployment": true,
 	"feature:visit-tag": true,
 	"feature:warn-pr-from-master": true,
-	"feature:warning-for-disallow-edits": true
+	"feature:warning-for-disallow-edits": true,
+	"feature:embed-gist-via-iframe": false
 }

@@ -19,6 +19,7 @@ System info: CachyOS + KDE Plasma Wayland + fish shell
 - [Services](#services)
   - [SSH Session Keep-Alive](#ssh-session-keep-alive)
   - [Java](#java)
+  - [GPG](#gpg)
 - [Applications](#applications)
   - [AppImages](#appimages)
   - [Cachy Browser](#cachy-browser)
@@ -36,7 +37,7 @@ System info: CachyOS + KDE Plasma Wayland + fish shell
 
 Simple overview of the largest files and folders:
 
-```shell
+```bash
 sudo pacman -S ncdu
 ncdu /
 ```
@@ -45,7 +46,7 @@ ncdu /
 
 Find files in current directory with a specified minimum size (in this example 100 MB):
 
-```shell
+```bash
 find . -type f -size +100M
 ```
 
@@ -53,7 +54,7 @@ find . -type f -size +100M
 
 Call this to start interactive package manager cache clearing:
 
-```shell
+```bash
 yay -Sc
 ```
 
@@ -67,7 +68,7 @@ sudo cachyos-rate-mirrors
 
 To automatically clear older files in the trash, run the following (example: files older than 40 days):
 
-```shell
+```bash
 uv tool install autotrash
 autotrash -d 40 --install
 ```
@@ -76,13 +77,13 @@ autotrash -d 40 --install
 
 See space used by system logs:
 
-```shell
+```bash
 journalctl --disk-usage
 ```
 
 Set maximum log retention time in `/etc/systemd/journald.conf`:
 
-```shell
+```bash
 MaxRetentionSec=1month
 ```
 
@@ -92,7 +93,7 @@ MaxRetentionSec=1month
 
 Edit `/etc/ssh/ssh_config` and append:
 
-```shell
+```bash
 ServerAliveInterval 60
 ```
 
@@ -116,6 +117,34 @@ Set the `JAVA_HOME` env variable with the following config in `~/.env`:
 JAVA_HOME=/usr/lib/jvm/default
 ```
 
+### GPG
+
+List keys:
+
+```bash
+gpg --list-secret-keys --keyid-format=long
+```
+
+Show public key for id:
+
+```bash
+gpg --armor --export <keyid>
+```
+
+Edit key:
+
+```bash
+gpg --edit-key <keyid>
+```
+
+Set correct `~/.gnupg/` permissions:
+
+```bash
+chown -R $(whoami) ~/.gnupg/
+find ~/.gnupg -type f -exec chmod 600 {} \;
+find ~/.gnupg -type d -exec chmod 700 {} \;
+```
+
 ## Applications
 
 ### AppImages
@@ -128,28 +157,14 @@ sudo pacman -S fuse
 
 ### Cachy Browser
 
-To apply policies to Cachy Browser via the [browser/policies2.json](browser/policies2.json), store it at `/usr/lib/cachy-browser/distribution` and manually add the policies to `/usr/lib/cachy-browser/distribution/policies.json`.  
+To apply preferences to Cachy Browser via the [browser/cachy.overrides.cfg](browser/cachy.overrides.cfg), store it at `~/.cachy/`.  
 Restart the browser and find applied policies at `about:policies`.
-
-Custom configs not available with the centralized policy configuration:
-
-- `full-screen-api.warning.timeout`: 0 (disables the fullscreen popup)
-- `privacy.clearOnShutdown.cache`: false
-- `privacy.clearOnShutdown.downloads`: false
-- `privacy.clearOnShutdown.history`: false
-- `privacy.clearOnShutdown_v2.browsingHistoryAndDownloads`: false
-- `privacy.clearOnShutdown_v2.cache`: false
-- `privacy.clearOnShutdown_v2.cookiesAndStorage`: false
-- `privacy.clearOnShutdown_v2.historyFormDataAndDownloads`: false
-- `privacy.resistFingerprinting`: false (loosen fingerprinting resistance)
-- `reader.parse-on-load.enabled`: false (disables the simplified reader mode)
-- `webgl.disabled`: false (allows WebGL)
 
 ### OneDrive
 
 Install [abraunegg/onedrive](https://github.com/abraunegg/onedrive):
 
-```shell
+```bash
 yay -S onedrive-abraunegg
 ```
 
@@ -158,14 +173,14 @@ yay -S onedrive-abraunegg
 
 To allow logging to `/var/log/onedrive`, do the following:
 
-```shell
+```bash
 sudo mkdir /var/log/onedrive
 sudo chown root:niko /var/log/onedrive
 sudo chmod 0775 /var/log/onedrive
 ```
 
 Initialize onedrive:  
-```shell
+```bash
 onedrive
 ```
 

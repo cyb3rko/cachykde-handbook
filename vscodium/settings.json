@@ -1,0 +1,8 @@
+{
+    "security.workspace.trust.untrustedFiles": "open",
+    "chat.commandCenter.enabled": false,
+    "workbench.editor.highlightModifiedTabs": true,
+    "editor.renderWhitespace": "all",
+    "explorer.confirmPasteNative": false,
+    "explorer.confirmDragAndDrop": false
+}

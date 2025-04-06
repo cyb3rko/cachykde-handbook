@@ -43,6 +43,7 @@ end
 
 if not command -v docker > /dev/null
     print "=== Installing rootless Docker... ==="
+    curl --create-dirs -fsSLo "$HOME/.config/docker/daemon.json" https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/docker/daemon.json
     curl -fsSL https://get.docker.com/rootless | sh
     set path_vars "$HOME/.path_vars"
     set docker_bin_path "$HOME/bin"

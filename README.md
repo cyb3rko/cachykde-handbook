@@ -31,6 +31,13 @@ System info: CachyOS + KDE Plasma Wayland + fish shell
 - [TLS](#tls)
   - [Import CA](#import-ca)
 
+The initial starting point is [`setup.fish`](setup.fish), which sets up all required tools and applications by itself.  
+Run it with the following command:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/setup.fish | fish
+```
+
 ## Resource Management
 
 ### Large file and folder monitor
@@ -193,7 +200,11 @@ First sync:
 
 First allow AppImages (see [AppImages](#appimages)).
 
-Then run [`jetbrains-toolbox.sh`](jetbrains-toolbox.sh).
+Then run [`jetbrains-toolbox.sh`](jetbrains-toolbox.sh) with:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/jetbrains-toolbox.sh | sh
+```
 
 ### nvm
 

@@ -47,8 +47,13 @@ if not command -v docker > /dev/null
     curl -fsSL https://get.docker.com/rootless | sh
     set path_vars "$HOME/.path_vars"
     set docker_bin_path "$HOME/bin"
-    if not test (grep -q $docker_bin_path $path_vars)
+    if not grep -q $docker_bin_path $path_vars
         echo $docker_bin_path >> $path_vars
+    end
+    set env_path "$HOME/.env"
+    set docker_host "DOCKER_HOST=unix:///run/user/1000/docker.sock"
+    if not grep -q $docker_host $env_path
+        echo $docker_host >> $env_path
     end
 end
 

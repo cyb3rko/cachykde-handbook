@@ -1,7 +1,7 @@
 {
 	"__webextOptionsSync": "Refined GitHub",
 	"actionUrl": "",
-	"customCSS": ".AppHeader-CopilotChat, .copilotPreview__container, #copilot-floating-button, #blob-view-header-copilot-icon, #copilot-diff-header-button {\n    display: none !important;\n}\na[href=\"/settings/enterprises\"], a[href^=\"/organizations/enterprise_plan\"], a[href=\"/copilot\"], a[href=\"/settings/copilot\"] {\n    display: none !important;\n}",
+	"customCSS": ".AppHeader-CopilotChat, .copilotPreview__container, #copilot-floating-button, #blob-view-header-copilot-icon, #copilot-diff-header-button, .CopilotWorkspaceButton-module__buttonGroup--ZEfG8, .my-2 {\n    display: none !important;\n}\na[href=\"/settings/enterprises\"], a[href^=\"/organizations/enterprise_plan\"], a[href=\"/copilot\"], a[href=\"/settings/copilot\"] {\n    display: none !important;\n}",
 	"personalToken": "xxx",
 	"logging": false,
 	"logHTTP": false,
@@ -98,6 +98,7 @@
 	"feature:new-or-deleted-file": true,
 	"feature:new-repo-disable-projects-and-wikis": true,
 	"feature:no-duplicate-list-update-time": true,
+	"feature:no-modals": false,
 	"feature:no-unnecessary-split-diff-view": true,
 	"feature:one-click-diff-options": false,
 	"feature:one-click-pr-or-gist": true,
@@ -158,6 +159,7 @@
 	"feature:rgh-pr-template": true,
 	"feature:rgh-token-user": true,
 	"feature:same-branch-author-commits": false,
+	"feature:same-page-links": true,
 	"feature:scrollable-areas": true,
 	"feature:select-all-notifications-shortcut": false,
 	"feature:select-notifications": true,
@@ -194,6 +196,5 @@
 	"feature:view-last-pr-deployment": true,
 	"feature:visit-tag": true,
 	"feature:warn-pr-from-master": true,
-	"feature:warning-for-disallow-edits": true,
-	"feature:embed-gist-via-iframe": false
+	"feature:warning-for-disallow-edits": false
 }

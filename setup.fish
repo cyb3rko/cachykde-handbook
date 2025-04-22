@@ -76,6 +76,11 @@ if not command -v codium > /dev/null
     yay -S vscodium-bin
 end
 
+print "=== Installing codium extensions... ==="
+# Save currently installed extensions with:
+# codium --list-extensions > vscodium/extensions.txt
+curl -fsSL https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/vscodium/extensions.txt | xargs -L 1 codium --install-extension
+
 if not command -v gh > /dev/null
     print "=== Installing and setting up GitHub CLI... ==="
     sudo pacman -S github-cli

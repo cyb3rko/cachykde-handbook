@@ -206,6 +206,8 @@ Then run [`jetbrains-toolbox.sh`](jetbrains-toolbox.sh) with:
 curl -fsSL https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/jetbrains-toolbox.sh | sh
 ```
 
+Based on [nagygergo/jetbrains-toolbox-install](https://github.com/nagygergo/jetbrains-toolbox-install)
+
 ### nvm
 
 Install nvm like explained in their [README](https://github.com/nvm-sh/nvm?tab=readme-ov-file#install--update-script).  
@@ -240,5 +242,5 @@ sudo chmod a+rx /usr/local/bin/yt-dlp
 ### Import CA
 
 1. Run `sudo trust anchor ca-file.pem`
-2. Check import with `ls /etc/ca-certificates/trust-source`
+2. Check import with `ls /etc/ca-certificates/trust-source` and `trust list`
 3. (Test TLS connection with `openssl s_client -connect <host>:443`)

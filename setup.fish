@@ -104,10 +104,17 @@ if not command -v yt-dlp > /dev/null
 end
 
 if sudo dmidecode -s system-manufacturer | grep -qi "Tuxedo"
+    # Laptop
     set packages (pacman -Q | grep tuxedo | count)
     if test $packages -ne 3
         print "=== Tuxedo detected - Installing tools and drivers... ==="
         yay -S tuxedo-control-center-bin tuxedo-drivers-dkms tuxedo-webfai-creator-bin
+    end
+else
+    # Not laptop
+    if not command -v kdenlive > /dev/null
+        print "=== Installing kdenlive... ==="
+        yay -S kdenlive
     end
 end
 

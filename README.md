@@ -22,7 +22,7 @@ System info: CachyOS + KDE Plasma Wayland + fish shell
   - [GPG](#gpg)
 - [Applications](#applications)
   - [AppImages](#appimages)
-  - [Cachy Browser](#cachy-browser)
+  - [Librewolf](#librewolf)
   - [OneDrive](#onedrive)
   - [Jetbrains Toolbox](#jetbrains-toolbox)
   - [nvm](#nvm)
@@ -162,9 +162,13 @@ To use AppImage files, call the following:
 sudo pacman -S fuse
 ```
 
-### Cachy Browser
+### Librewolf
 
-To apply preferences to Cachy Browser via the [browser/cachy.overrides.cfg](browser/cachy.overrides.cfg), store it at `~/.cachy/`.  
+```bash
+yay -S librewolf-bin
+```
+
+To apply preferences to Librewolf via the [browser/librewolf.overrides.cfg](browser/librewolf.overrides.cfg), store it at `~/.librewolf/`.  
 Restart the browser and find applied policies at `about:policies`.
 
 ### OneDrive

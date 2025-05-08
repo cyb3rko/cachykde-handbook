@@ -38,10 +38,10 @@ if not command -v librewolf > /dev/null
     print "=== Installing librewolf... ==="
     yay -S librewolf-bin
 end
-if not -e ~/.librewolf/librewolf.overrides.cfg
+if not test -e ~/.librewolf/librewolf.overrides.cfg
     print "=== Installing custom librewolf configuration... ==="
     curl -fsSL https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/browser/librewolf.overrides.cfg -o ~/.librewolf/librewolf.overrides.cfg
-fi
+end
 
 # default editor: https://vscodium.com
 if not command -v codium > /dev/null
@@ -127,6 +127,13 @@ if sudo dmidecode -s system-manufacturer | grep -qi "Tuxedo"
         print "=== Tuxedo detected - Installing tools and drivers... ==="
         yay -S tuxedo-control-center-bin tuxedo-drivers-dkms tuxedo-webfai-creator-bin
     end
+    if not test -d ~/Dokumente/tuxedo
+        mkdir ~/Dokumente/tuxedo
+    end
+    if not test -f ~/Dokumente/tuxedo/TCC_Profiles_Backup.json
+        print "=== Tuxedo - Fetching control center profiles... ==="
+        curl -fsSL https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/tuxedo/TCC_Profiles_Backup.json -o ~/Dokumente/tuxedo/TCC_Profiles_Backup.json
+    end
 else
     # Not on laptopk
     # video editor: https://kdenlive.org
@@ -152,6 +159,14 @@ end
 if not command -v ncdu > /dev/null
     print "=== Installing ncdu... ==="
     sudo pacman -S ncdu
+end
+
+# enable IPv6 privacy extensions: https://wiki.archlinux.org/title/IPv6#Privacy_extensions
+if test (grep -zoP "# Enable IPv6 Privacy Extensions\nnet.ipv6.conf.all.use_tempaddr = 2\nnet.ipv6.conf.default.use_tempaddr = 2" /etc/sysctl.d/40-ipv6.conf | wc -l) -ne 2
+    print "=== Configuring IPv6 privacy extensions"
+    echo "# Enable IPv6 Privacy Extensions
+net.ipv6.conf.all.use_tempaddr = 2
+net.ipv6.conf.default.use_tempaddr = 2" | sudo tee -a /etc/sysctl.d/40-ipv6.conf > /dev/null
 end
 
 # rerate CachyOS mirrors

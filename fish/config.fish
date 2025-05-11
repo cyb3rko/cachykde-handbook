@@ -6,6 +6,9 @@ function setabbreviations
   abbr autoremove "sudo pacman -Rsn (pacman -Qtdq)"
   abbr install "sudo pacman -S"
   abbr remove "sudo pacman -Rcns"
+  abbr dns-restart "sudo systemctl restart systemd-resolved"
+
+  abbr git-repo "xdg-open $(git remote get-url origin 2>/dev/null) >/dev/null 2>&1"
 
   abbr jump "ssh root@jump.langen.cyb3rko"
   abbr oci-main "ssh niko@oci-main.cloud.cyb3rko"

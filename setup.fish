@@ -24,6 +24,19 @@ if not command -v lla > /dev/null
     curl -fsSL https://raw.githubusercontent.com/chaqchase/lla/main/install.sh | sh
 end
 
+# cool resources monitor: https://github.com/aristocratos/btop
+if not command -v btop > /dev/null
+    print "=== Installing btop... ==="
+    sudo pacman -S btop
+end
+if not test -e ~/.config/btop/btop.conf
+    print "=== Installing btop configuration... ==="
+    if not test -d ~/.config/btop
+        mkdir ~/.config/btop
+    end
+    curl -fsSL https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/btop.conf -o ~/.config/btop/btop.conf
+end
+
 # package manager: https://github.com/Jguer/yay
 if not command -v yay > /dev/null
     print "=== Installing yay from source... ==="
@@ -38,9 +51,20 @@ if not command -v librewolf > /dev/null
     print "=== Installing librewolf... ==="
     yay -S librewolf-bin
 end
+if not test -d ~/.librewolf
+    mkdir ~/.librewolf
+end
 if not test -e ~/.librewolf/librewolf.overrides.cfg
     print "=== Installing custom librewolf configuration... ==="
-    curl -fsSL https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/browser/librewolf.overrides.cfg -o ~/.librewolf/librewolf.overrides.cfg
+else
+    print "=== Updating custom librewolf configuration... ==="
+end
+curl -fsSL https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/browser/librewolf.overrides.cfg -o ~/.librewolf/librewolf.overrides.cfg
+
+# backup browser: https://vivaldi.com
+if not command -v vivaldi > /dev/null
+    print "=== Installing Vivaldi... ==="
+    sudo pacman -S vivaldi
 end
 
 # default editor: https://vscodium.com

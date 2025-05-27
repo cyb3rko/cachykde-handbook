@@ -1,11 +1,12 @@
 function setabbreviations
-  abbr ls "lla -l"
+  abbr ls "lla -l --no-dotfiles"
+  abbr ll "lla -l"
   abbr lsd "lla -t -d"
   abbr wsensor "watch -d -n 1 sensors"
   abbr update "sudo pacman -Syu"
-  abbr autoremove "sudo pacman -Rsn (pacman -Qtdq)"
   abbr install "sudo pacman -S"
-  abbr remove "sudo pacman -Rcns"
+  abbr autoremove "sudo pacman -Rsn (pacman -Qtdq)"
+  abbr remove "sudo pacman -Rsn"
   abbr dns-restart "sudo systemctl restart systemd-resolved"
 
   abbr git-repo "xdg-open $(git remote get-url origin 2>/dev/null) >/dev/null 2>&1"

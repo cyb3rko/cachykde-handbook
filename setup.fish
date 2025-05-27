@@ -9,6 +9,30 @@ function print
     echo -e "\e[45m$argv[1]\e[0m"
 end
 
+function download
+    if test (count $argv) -ne 2
+        print "Download function received not exact 2 params!"
+        exit 1
+    end
+    curl -fsSL --create-dirs $argv[1] -o $argv[2]
+end
+
+function download_sudo
+    if test (count $argv) -ne 2
+        print "Download function received not exact 2 params!"
+        exit 1
+    end
+    sudo curl -fsSL --create-dirs $argv[1] -o $argv[2]
+end
+
+function execute
+    if test (count $argv) -ne 1
+        print "Execute function received not exact 1 param!"
+        exit 1
+    end
+    curl -fsSL $argv[1] | sh
+end
+
 trap handle_sigint SIGINT
 
 if not test -e "$HOME/.env"
@@ -21,7 +45,11 @@ end
 # 'ls' alternative: https://lla.chaqchase.com/docs/about/introduction
 if not command -v lla > /dev/null
     print "=== Installing lla as 'ls' alternative... ==="
-    curl -fsSL https://raw.githubusercontent.com/chaqchase/lla/main/install.sh | sh
+    execute https://raw.githubusercontent.com/chaqchase/lla/main/install.sh
+end
+if not test -e ~/.config/lla/config.toml
+    print "=== Installing lla configuration... ==="
+    download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/lla/config.toml ~/.config/lla/config.toml
 end
 
 # cool resources monitor: https://github.com/aristocratos/btop
@@ -31,10 +59,7 @@ if not command -v btop > /dev/null
 end
 if not test -e ~/.config/btop/btop.conf
     print "=== Installing btop configuration... ==="
-    if not test -d ~/.config/btop
-        mkdir ~/.config/btop
-    end
-    curl -fsSL https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/btop.conf -o ~/.config/btop/btop.conf
+    download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/btop/btop.conf ~/.config/btop/btop.conf
 end
 
 # package manager: https://github.com/Jguer/yay
@@ -51,15 +76,12 @@ if not command -v librewolf > /dev/null
     print "=== Installing librewolf... ==="
     yay -S librewolf-bin
 end
-if not test -d ~/.librewolf
-    mkdir ~/.librewolf
-end
 if not test -e ~/.librewolf/librewolf.overrides.cfg
     print "=== Installing custom librewolf configuration... ==="
 else
     print "=== Updating custom librewolf configuration... ==="
 end
-curl -fsSL https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/browser/librewolf.overrides.cfg -o ~/.librewolf/librewolf.overrides.cfg
+download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/browser/librewolf.overrides.cfg ~/.librewolf/librewolf.overrides.cfg
 
 # backup browser: https://vivaldi.com
 if not command -v vivaldi > /dev/null
@@ -103,14 +125,14 @@ end
 # fast & modern Python package manager: https://docs.astral.sh/uv/
 if not command -v uv > /dev/null
     print "=== Installing uv... ==="
-    curl -fsSL https://astral.sh/uv/install.sh | sh
+    execute https://astral.sh/uv/install.sh
 end
 
 # well, it's Docker
 if not command -v docker > /dev/null
     print "=== Installing rootless Docker... ==="
-    curl --create-dirs -fsSLo "$HOME/.config/docker/daemon.json" https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/docker/daemon.json
-    curl -fsSL https://get.docker.com/rootless | sh
+    download "$HOME/.config/docker/daemon.json" https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/docker/daemon.json
+    execute https://get.docker.com/rootless
     set path_vars "$HOME/.path_vars"
     set docker_bin_path "$HOME/bin"
     if not grep -q $docker_bin_path $path_vars
@@ -129,18 +151,24 @@ if not pacman -Q | grep -q fuse2
     sudo pacman -S fuse
 end
 
+# Gimp: https://www.gimp.org
+if not command -v gimp > /dev/null
+    print "=== Installing Gimp... ==="
+    sudo pacman -S gimp
+end
+
 # JetBrains toolbox for JetBrains IDEs: https://www.jetbrains.com/toolbox-app/
 # Installer: https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/jetbrains-toolbox.sh
 # Installer based on: https://github.com/nagygergo/jetbrains-toolbox-install
 if not test -d "$HOME/.local/share/JetBrains/Toolbox/bin"
     print "=== Installing JetBrains toolbox... ==="
-    curl -fsSL https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/jetbrains-toolbox.sh | sh
+    execute https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/jetbrains-toolbox.sh
 end
 
 # universal video downloader tool: https://github.com/yt-dlp/yt-dlp
 if not command -v yt-dlp > /dev/null
     print "=== Installing yt-dlp... ==="
-    sudo curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp
+    download_sudo https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp /usr/local/bin/yt-dlp
     sudo chmod a+rx /usr/local/bin/yt-dlp
 end
 
@@ -151,15 +179,25 @@ if sudo dmidecode -s system-manufacturer | grep -qi "Tuxedo"
         print "=== Tuxedo detected - Installing tools and drivers... ==="
         yay -S tuxedo-control-center-bin tuxedo-drivers-dkms tuxedo-webfai-creator-bin
     end
-    if not test -d ~/Dokumente/tuxedo
-        mkdir ~/Dokumente/tuxedo
-    end
     if not test -f ~/Dokumente/tuxedo/TCC_Profiles_Backup.json
         print "=== Tuxedo - Fetching control center profiles... ==="
-        curl -fsSL https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/tuxedo/TCC_Profiles_Backup.json -o ~/Dokumente/tuxedo/TCC_Profiles_Backup.json
+        download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/tuxedo/TCC_Profiles_Backup.json ~/Dokumente/tuxedo/TCC_Profiles_Backup.json
     end
 else
-    # Not on laptopk
+    # Not on laptop
+
+    # device manager for Logitech devices: https://github.com/pwr-Solaar/Solaar
+    if not command -v solaar > /dev/null
+        print "=== Installing solaar... ==="
+        sudo pacman -S solaar
+    end
+    # configure autostart
+    download_sudo https://raw.githubusercontent.com/pwr-Solaar/Solaar/refs/heads/master/share/autostart/solaar.desktop /etc/xdg/autostart/solaar.desktop
+    # give permissions
+    download_sudo https://raw.githubusercontent.com/pwr-Solaar/Solaar/master/rules.d-uinput/42-logitech-unify-permissions.rules /etc/udev/rules.d/42-logitech-unify-permissions.rules
+    # update rules
+    download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/solaar/rules.yaml ~/.config/solaar/rules.yaml
+    sudo udevadm control --reload-rules
     # video editor: https://kdenlive.org
     if not command -v kdenlive > /dev/null
         print "=== Installing kdenlive... ==="

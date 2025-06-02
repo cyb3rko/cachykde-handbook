@@ -1,7 +1,7 @@
 {
 	"__webextOptionsSync": "Refined GitHub",
 	"actionUrl": "",
-	"customCSS": ".AppHeader-CopilotChat, .copilotPreview__container, #copilot-floating-button, #blob-view-header-copilot-icon, #copilot-diff-header-button, .CopilotWorkspaceButton-module__buttonGroup--ZEfG8, .my-2 {\n    display: none !important;\n}\na[href=\"/settings/enterprises\"], a[href^=\"/organizations/enterprise_plan\"], a[href=\"/copilot\"], a[href=\"/settings/copilot\"] {\n    display: none !important;\n}",
+	"customCSS": ".AppHeader-CopilotChat, .copilotPreview__container, #copilot-floating-button, #blob-view-header-copilot-icon, #copilot-diff-header-button, .CopilotWorkspaceButton-module__buttonGroup--ZEfG8 {\n    display: none !important;\n}\na[href=\"/settings/enterprises\"], a[href^=\"/organizations/enterprise_plan\"], a[href=\"/copilot\"], a[href=\"/settings/copilot\"] {\n    display: none !important;\n}",
 	"personalToken": "xxx",
 	"logging": false,
 	"logHTTP": false,

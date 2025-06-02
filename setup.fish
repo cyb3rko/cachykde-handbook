@@ -74,7 +74,7 @@ end
 # default browser: https://librewolf.net
 if not command -v librewolf > /dev/null
     print "=== Installing librewolf... ==="
-    yay -S librewolf-bin
+    yay librewolf-bin
 end
 if not test -e ~/.librewolf/librewolf.overrides.cfg
     print "=== Installing custom librewolf configuration... ==="
@@ -92,7 +92,7 @@ end
 # default editor: https://vscodium.com
 if not command -v codium > /dev/null
     print "=== Installing codium... ==="
-    yay -S vscodium-bin
+    yay vscodium-bin
 end
 print "=== Installing codium extensions... ==="
 # Save currently installed extensions with:
@@ -116,7 +116,7 @@ end
 # Linux onedrive sync client: https://github.com/abraunegg/onedrive
 if not command -v onedrive > /dev/null
     print "=== Installing onedrive client... ==="
-    yay -S onedrive-abraunegg
+    yay onedrive-abraunegg
     sudo mkdir /var/log/onedrive
     sudo chown root:(whoami) /var/log/onedrive
     sudo chmod 0775 /var/log/onedrive
@@ -151,6 +151,13 @@ if not pacman -Q | grep -q fuse2
     sudo pacman -S fuse
 end
 
+
+# Bruno (HTTP client): https://usebruno.com
+if not command -v bruno > /dev/null
+    print "=== Installing Bruno... ==="
+    yay bruno-bin
+end
+
 # Gimp: https://www.gimp.org
 if not command -v gimp > /dev/null
     print "=== Installing Gimp... ==="
@@ -177,7 +184,7 @@ if sudo dmidecode -s system-manufacturer | grep -qi "Tuxedo"
     set packages (pacman -Q | grep tuxedo | count)
     if test $packages -ne 3
         print "=== Tuxedo detected - Installing tools and drivers... ==="
-        yay -S tuxedo-control-center-bin tuxedo-drivers-dkms tuxedo-webfai-creator-bin
+        yay tuxedo-control-center-bin tuxedo-drivers-dkms tuxedo-webfai-creator-bin
     end
     if not test -f ~/Dokumente/tuxedo/TCC_Profiles_Backup.json
         print "=== Tuxedo - Fetching control center profiles... ==="
@@ -201,20 +208,20 @@ else
     # video editor: https://kdenlive.org
     if not command -v kdenlive > /dev/null
         print "=== Installing kdenlive... ==="
-        yay -S kdenlive
+        yay kdenlive
     end
 end
 
 # well, it's Signal
 if not command -v signal-desktop > /dev/null
     print "=== Installing Signal Desktop... ==="
-    yay -S signal-desktop
+    yay signal-desktop
 end
 
 # well, it's Element
 if not command -v element-desktop > /dev/null
     print "=== Installing Element Desktop... ==="
-    yay -S element-desktop
+    yay element-desktop
 end
 
 # disk usage analyzer tool

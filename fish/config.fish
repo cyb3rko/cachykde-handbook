@@ -6,6 +6,7 @@ function setabbreviations
   abbr install "yay"
   abbr remove "yay -R"
   abbr autoremove "sudo pacman -Rsn (pacman -Qtdq)"
+  abbr clean "yay -Scc"
 
   abbr wsensor "watch -d -n 1 sensors"
   abbr dns-restart "sudo systemctl restart systemd-resolved"

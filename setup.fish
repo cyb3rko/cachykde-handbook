@@ -99,11 +99,31 @@ print "=== Installing codium extensions... ==="
 # codium --list-extensions > vscodium/extensions.txt
 curl -fsSL https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/vscodium/extensions.txt | xargs -L 1 codium --install-extension
 
+# Arch Linux update helper: https://github.com/Antiz96/arch-update
+if not command -v arch-update > /dev/null
+    print "=== Installing and configuring arch-update... ==="
+    yay arch-update
+    download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/arch-update/arch-update.conf ~/.config/arch-update/arch-update.conf
+    arch-update --tray --enable
+    systemctl --user enable --now arch-update.timer
+end
+
 # GitHub cli tool: https://cli.github.com/
 if not command -v gh > /dev/null
     print "=== Installing and setting up GitHub CLI... ==="
     sudo pacman -S github-cli
     gh auth login
+end
+
+# fast & modern Python package manager: https://docs.astral.sh/uv/
+if not command -v uv > /dev/null
+    print "=== Installing uv... ==="
+    execute https://astral.sh/uv/install.sh
+    set just_installed 1
+end
+if test "$just_installed" != 1
+    print "=== Self-updating uv... ==="
+    uv self update
 end
 
 # automatically purge old files from trash: https://github.com/bneijt/autotrash
@@ -120,12 +140,6 @@ if not command -v onedrive > /dev/null
     sudo mkdir /var/log/onedrive
     sudo chown root:(whoami) /var/log/onedrive
     sudo chmod 0775 /var/log/onedrive
-end
-
-# fast & modern Python package manager: https://docs.astral.sh/uv/
-if not command -v uv > /dev/null
-    print "=== Installing uv... ==="
-    execute https://astral.sh/uv/install.sh
 end
 
 # well, it's Docker

@@ -71,6 +71,11 @@ if not command -v yay > /dev/null
     makepkg -si
 end
 
+if not pacman -Q ttf-twemoji-color > /dev/null 2>&1
+    print "=== Installing emoji font to fix rendering issues... ==="
+    yay ttf-twemoji-color
+end
+
 # default browser: https://librewolf.net
 if not command -v librewolf > /dev/null
     print "=== Installing librewolf... ==="

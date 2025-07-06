@@ -42,6 +42,14 @@ if not test -e "$HOME/.path_vars"
     touch "$HOME/.path_vars"
 end
 
+# enable IPv6 privacy extensions: https://wiki.archlinux.org/title/IPv6#Privacy_extensions
+if test (grep -zoP "# Enable IPv6 Privacy Extensions\nnet.ipv6.conf.all.use_tempaddr = 2\nnet.ipv6.conf.default.use_tempaddr = 2" /etc/sysctl.d/40-ipv6.conf | wc -l) -ne 2
+    print "=== Configuring IPv6 privacy extensions"
+    echo "# Enable IPv6 Privacy Extensions
+net.ipv6.conf.all.use_tempaddr = 2
+net.ipv6.conf.default.use_tempaddr = 2" | sudo tee -a /etc/sysctl.d/40-ipv6.conf > /dev/null
+end
+
 # 'ls' alternative: https://lla.chaqchase.com/docs/about/introduction
 if not command -v lla > /dev/null
     print "=== Installing lla as 'ls' alternative... ==="
@@ -170,7 +178,6 @@ if not pacman -Q | grep -q fuse2
     sudo pacman -S fuse
 end
 
-
 # Bruno (HTTP client): https://usebruno.com
 if not command -v bruno > /dev/null
     print "=== Installing Bruno... ==="
@@ -249,12 +256,10 @@ if not command -v ncdu > /dev/null
     sudo pacman -S ncdu
 end
 
-# enable IPv6 privacy extensions: https://wiki.archlinux.org/title/IPv6#Privacy_extensions
-if test (grep -zoP "# Enable IPv6 Privacy Extensions\nnet.ipv6.conf.all.use_tempaddr = 2\nnet.ipv6.conf.default.use_tempaddr = 2" /etc/sysctl.d/40-ipv6.conf | wc -l) -ne 2
-    print "=== Configuring IPv6 privacy extensions"
-    echo "# Enable IPv6 Privacy Extensions
-net.ipv6.conf.all.use_tempaddr = 2
-net.ipv6.conf.default.use_tempaddr = 2" | sudo tee -a /etc/sysctl.d/40-ipv6.conf > /dev/null
+# helper to install Proton versions
+if not command -v protonplus > /dev/null
+    print "=== Installing protonplus... ==="
+    yay protonplus
 end
 
 # rerate CachyOS mirrors

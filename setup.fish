@@ -25,6 +25,15 @@ function download_sudo
     sudo curl -fsSL --create-dirs $argv[1] -o $argv[2]
 end
 
+function download_extract
+    if test (count $argv) -ne 2
+        print "Download function received not exact 2 params!"
+        exit 1
+    end
+    mkdir -p $argv[2]
+    curl -fsSL $argv[1] | tar xfz - -C $argv[2]
+end
+
 function execute
     if test (count $argv) -ne 1
         print "Execute function received not exact 1 param!"
@@ -261,6 +270,10 @@ if not command -v protonplus > /dev/null
     print "=== Installing protonplus... ==="
     yay protonplus
 end
+
+# install KDE window open/close effects: https://github.com/Schneegans/Burn-My-Windows
+print "=== Installing KDE window open/close effects... ==="
+download_extract https://github.com/Schneegans/Burn-My-Windows/releases/latest/download/burn_my_windows_kwin6.tar.gz ~/.local/share/kwin/effects
 
 # rerate CachyOS mirrors
 if test -e "$HOME/.cachymirrors"

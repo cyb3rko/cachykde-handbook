@@ -31,6 +31,8 @@ System info: CachyOS + KDE Plasma Wayland + fish shell
 - [TLS](#tls)
   - [Import CA](#import-ca)
 
+---
+
 The initial starting point is [`setup.fish`](setup.fish), which sets up all required tools and applications by itself.  
 Run it with the following command:
 
@@ -45,7 +47,6 @@ curl -fsSL https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/head
 Simple overview of the largest files and folders:
 
 ```bash
-sudo pacman -S ncdu
 ncdu /
 ```
 
@@ -164,20 +165,12 @@ sudo pacman -S fuse
 
 ### Librewolf
 
-```bash
-yay -S librewolf-bin
-```
-
 To apply preferences to Librewolf via the [browser/librewolf.overrides.cfg](browser/librewolf.overrides.cfg), store it at `~/.librewolf/`.  
 Restart the browser and find applied policies at `about:policies`.
 
 ### OneDrive
 
-Install [abraunegg/onedrive](https://github.com/abraunegg/onedrive):
-
-```bash
-yay -S onedrive-abraunegg
-```
+Install [abraunegg/onedrive](https://github.com/abraunegg/onedrive) with the following components:
 
 - **d-compiler**: ldc
 - **d-runtime**: liblphobos
@@ -227,24 +220,18 @@ set -U fish_user_paths /home/niko/.nvm/versions/node/*/bin $fish_user_paths
 
 ### Steam
 
-```bash
-sudo pacman -S steam
-```
+Included in CachyOS gaming package `cachyos-gaming-applications`.  
+Requires `cachyos-gaming-meta`.
+
+Configuration:
 
 - activate hardware acceleration in the Steam settings
 - enable game emulation via Proton in the Steam settings
-
-### yt-dlp
-
-```shell
-sudo curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp
-sudo chmod a+rx /usr/local/bin/yt-dlp
-```
 
 ## TLS
 
 ### Import CA
 
 1. Run `sudo trust anchor ca-file.pem`
-2. Check import with `ls /etc/ca-certificates/trust-source` and `trust list`
-3. (Test TLS connection with `openssl s_client -connect <host>:443`)
+2. Check import with `ls /etc/ca-certificates/trust-source` and `trust list` (to grep e.g. 'Cyb3rKo' in CA list, use `trust list | grep -iB 5 Cyb3rKo`)
+3. [Test TLS connection with `openssl s_client -connect <host>:443`]

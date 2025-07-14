@@ -69,6 +69,11 @@ if not test -e ~/.config/lla/config.toml
     download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/lla/config.toml ~/.config/lla/config.toml
 end
 
+if not test -e ~/.config/bat/config
+    print "=== Installing bat configuration... ==="
+    download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/bat/config ~/.config/bat/config
+end
+
 # cool resources monitor: https://github.com/aristocratos/btop
 if not command -v btop > /dev/null
     print "=== Installing btop... ==="

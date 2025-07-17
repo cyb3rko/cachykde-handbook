@@ -280,6 +280,14 @@ end
 print "=== Installing KDE window open/close effects... ==="
 download_extract https://github.com/Schneegans/Burn-My-Windows/releases/latest/download/burn_my_windows_kwin6.tar.gz ~/.local/share/kwin/effects
 
+# install KDE cursor themes:
+#  - https://github.com/ful1e5/Bibata_Cursor
+#  - https://github.com/ful1e5/banana-cursor
+print "=== Installing KDE Bibata cursor (default cursor)... ==="
+download_extract https://github.com/ful1e5/Bibata_Cursor/releases/latest/download/Bibata-Modern-Ice.tar.xz ~/.icons
+print "=== Installing KDE Banana cursor (fun cursor)... ==="
+download_extract https://github.com/ful1e5/banana-cursor/releases/latest/download/banana-all.tar.xz ~/.icons
+
 # rerate CachyOS mirrors
 if test -e "$HOME/.cachymirrors"
     set reference_point (date -d "-3 weeks" +%s)

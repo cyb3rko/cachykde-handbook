@@ -1,3 +1,5 @@
+# custom
+
 function setabbreviations
   abbr ls "lla -l --no-dotfiles"
   abbr ll "lla -l"

@@ -31,7 +31,17 @@ function download_extract
         exit 1
     end
     mkdir -p $argv[2]
-    curl -fsSL $argv[1] | tar xfz - -C $argv[2]
+    # xz
+    if test (string sub -s (math (string length $argv[1]) - 1) -l 2 $argv[1]) = "xz"
+        curl -fsSL $argv[1] | tar xfJ - -C $argv[2]
+    # gzip
+    else if test (string sub -s (math (string length $argv[1]) - 1) -l 2 $argv[1]) = "gz"
+        curl -fsSL $argv[1] | tar xfz - -C $argv[2]
+    # unknown
+    else
+        print "Download function received unexpected archive type!"
+        exit 1
+    end
 end
 
 function execute
@@ -44,11 +54,29 @@ end
 
 trap handle_sigint SIGINT
 
-if not test -e "$HOME/.env"
-    touch "$HOME/.env"
+if not test -e ~/.env
+    touch ~/.env
 end
-if not test -e "$HOME/.path_vars"
-    touch "$HOME/.path_vars"
+if not test -e ~/.path_vars
+    touch ~/.path_vars
+end
+
+# initialize fish config if never done before
+if not test (head -n 1 ~/.config/fish/config.fish) = "# custom"
+    print "=== Detected fish config in initial state, overwriting with custom config ==="
+    cp ~/.config/fish/config.fish ~/.config/fish/config.fish.backup
+    download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/fish/config.fish ~/.config/fish/config.fish
+    source ~/.config/fish/config.fish
+end
+
+# remove unused files and dirs
+rm -rf -- ~/.bash_logout ~/.var ~/.zshrc ~/Musik ~/Öffentlich ~/Vorlagen
+
+if test -d ~/.gnupg/
+    echo "=== Making sure GPG file permissions are correct... ==="
+    chown -R $(whoami) ~/.gnupg/
+    find ~/.gnupg/ -type f -exec chmod 600 {} \; # Owner read/write (600) for files
+    find ~/.gnupg/ -type d -exec chmod 700 {} \; # Owner read/write/execute (700) for directories
 end
 
 # enable IPv6 privacy extensions: https://wiki.archlinux.org/title/IPv6#Privacy_extensions
@@ -87,10 +115,11 @@ end
 # package manager: https://github.com/Jguer/yay
 if not command -v yay > /dev/null
     print "=== Installing yay from source... ==="
-    sudo pacman -S --needed git base-devel
-    git clone https://aur.archlinux.org/yay.git "$HOME/Dokumente/yay"
-    cd "$HOME/Dokumente/yay"
+    sudo pacman -S --needed --noconfirm git base-devel go
+    git clone https://aur.archlinux.org/yay.git ~/Dokumente/yay
+    cd ~/Dokumente/yay
     makepkg -si
+    rm -f -- ~/Dokumente/yay
 end
 
 if not pacman -Q ttf-twemoji-color > /dev/null 2>&1
@@ -172,14 +201,14 @@ end
 # well, it's Docker
 if not command -v docker > /dev/null
     print "=== Installing rootless Docker... ==="
-    download "$HOME/.config/docker/daemon.json" https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/docker/daemon.json
+    download "https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/docker/daemon.json" ~/.config/docker/daemon.json
     execute https://get.docker.com/rootless
-    set path_vars "$HOME/.path_vars"
-    set docker_bin_path "$HOME/bin"
+    set path_vars ~/.path_vars
+    set docker_bin_path ~/bin
     if not grep -q $docker_bin_path $path_vars
         echo $docker_bin_path >> $path_vars
     end
-    set env_path "$HOME/.env"
+    set env_path ~/.env
     set docker_host "DOCKER_HOST=unix:///run/user/1000/docker.sock"
     if not grep -q $docker_host $env_path
         echo $docker_host >> $env_path
@@ -207,7 +236,7 @@ end
 # JetBrains toolbox for JetBrains IDEs: https://www.jetbrains.com/toolbox-app/
 # Installer: https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/jetbrains-toolbox.sh
 # Installer based on: https://github.com/nagygergo/jetbrains-toolbox-install
-if not test -d "$HOME/.local/share/JetBrains/Toolbox/bin"
+if not test -d ~/.local/share/JetBrains/Toolbox/bin
     print "=== Installing JetBrains toolbox... ==="
     execute https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/jetbrains-toolbox.sh
 end
@@ -224,7 +253,9 @@ if sudo dmidecode -s system-manufacturer | grep -qi "Tuxedo"
     set packages (pacman -Q | grep tuxedo | count)
     if test $packages -ne 3
         print "=== Tuxedo detected - Installing tools and drivers... ==="
-        yay tuxedo-control-center-bin tuxedo-drivers-dkms tuxedo-webfai-creator-bin
+        yay tuxedo-drivers-dkms
+        yay tuxedo-control-center-bin
+        yay tuxedo-webfai-creator-bin
     end
     if not test -f ~/Dokumente/tuxedo/TCC_Profiles_Backup.json
         print "=== Tuxedo - Fetching control center profiles... ==="
@@ -289,9 +320,9 @@ print "=== Installing KDE Banana cursor (fun cursor)... ==="
 download_extract https://github.com/ful1e5/banana-cursor/releases/latest/download/banana-all.tar.xz ~/.icons
 
 # rerate CachyOS mirrors
-if test -e "$HOME/.cachymirrors"
+if test -e ~/.cachymirrors
     set reference_point (date -d "-3 weeks" +%s)
-    set checkpoint (cat "$HOME/.cachymirrors")
+    set checkpoint (cat ~/.cachymirrors)
     if test $reference_point -lt $checkpoint
         print "=== Setup finished :) ==="
         exit 0
@@ -300,5 +331,5 @@ end
 print "=== Rating CachyOS mirrors... ==="
 sudo cachyos-rate-mirrors
 set current_stamp (date +%s)
-echo $current_stamp > "$HOME/.cachymirrors"
+echo $current_stamp > ~/.cachymirrors
 print "=== Setup finished :) ==="

@@ -72,8 +72,13 @@ end
 # remove unused files and dirs
 rm -rf -- ~/.bash_logout ~/.var ~/.zshrc ~/Musik ~/Öffentlich ~/Vorlagen
 
+if not test -e ~/.gitconfig
+    print "=== Configuring .gitconfig... ==="
+    download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/.gitconfig ~/.gitconfig
+end
+
 if test -d ~/.gnupg/
-    echo "=== Making sure GPG file permissions are correct... ==="
+    print "=== Making sure GPG file permissions are correct... ==="
     chown -R $(whoami) ~/.gnupg/
     find ~/.gnupg/ -type f -exec chmod 600 {} \; # Owner read/write (600) for files
     find ~/.gnupg/ -type d -exec chmod 700 {} \; # Owner read/write/execute (700) for directories

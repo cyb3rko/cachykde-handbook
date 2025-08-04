@@ -9,6 +9,10 @@ function print
     echo -e "\e[45m$argv[1]\e[0m"
 end
 
+function is_command
+    command -v $argv[1] > /dev/null
+end
+
 function download
     if test (count $argv) -ne 2
         print "Download function received not exact 2 params!"
@@ -70,7 +74,24 @@ if not test (head -n 1 ~/.config/fish/config.fish) = "# custom"
 end
 
 # remove unused files and dirs
-rm -rf -- ~/.bash_logout ~/.var ~/.zshrc ~/Musik ~/Öffentlich ~/Vorlagen
+rm -rf -- ~/.bash_history ~/.bash_logout ~/.var ~/.zshrc ~/Musik ~/Öffentlich ~/Vorlagen
+
+# copy and set wallpapers
+if not test (find ~/.local/share/wallpapers/cachygalaxy*.jpg | wc -l) = 2
+    print "=== Downloading wallpapers to system... ==="
+    download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/desktop/wallpapers/cachygalaxy99.jpg ~/.local/share/wallpapers/cachygalaxy99.jpg
+    download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/desktop/wallpapers/cachygalaxy99-bernd.jpg ~/.local/share/wallpapers/cachygalaxy99-bernd.jpg
+    print "=== Applying desktop wallpaper... ==="
+    plasma-apply-wallpaperimage ~/.local/share/wallpapers/cachygalaxy99-bernd.jpg
+end
+
+# install KDE cursor themes:
+#  - https://github.com/ful1e5/Bibata_Cursor
+#  - https://github.com/ful1e5/banana-cursor
+print "=== Installing KDE Bibata cursor (default cursor)... ==="
+download_extract https://github.com/ful1e5/Bibata_Cursor/releases/latest/download/Bibata-Modern-Ice.tar.xz ~/.icons
+print "=== Installing KDE Banana cursor (fun cursor)... ==="
+download_extract https://github.com/ful1e5/banana-cursor/releases/latest/download/banana-all.tar.xz ~/.icons
 
 if not test -e ~/.gitconfig
     print "=== Configuring .gitconfig... ==="
@@ -92,8 +113,14 @@ net.ipv6.conf.all.use_tempaddr = 2
 net.ipv6.conf.default.use_tempaddr = 2" | sudo tee -a /etc/sysctl.d/40-ipv6.conf > /dev/null
 end
 
+# unused packages
+if is_command plasma-browser-integration-host
+    print "=== Removing 'plasma-browser-integration-host'... ==="
+    yay -R plasma-browser-integration-host
+end
+
 # 'ls' alternative: https://lla.chaqchase.com/docs/about/introduction
-if not command -v lla > /dev/null
+if not is_command lla
     print "=== Installing lla as 'ls' alternative... ==="
     execute https://raw.githubusercontent.com/chaqchase/lla/main/install.sh
 end
@@ -108,7 +135,7 @@ if not test -e ~/.config/bat/config
 end
 
 # cool resources monitor: https://github.com/aristocratos/btop
-if not command -v btop > /dev/null
+if not is_command btop
     print "=== Installing btop... ==="
     sudo pacman -S btop
 end
@@ -118,7 +145,7 @@ if not test -e ~/.config/btop/btop.conf
 end
 
 # package manager: https://github.com/Jguer/yay
-if not command -v yay > /dev/null
+if not is_command yay
     print "=== Installing yay from source... ==="
     sudo pacman -S --needed --noconfirm git base-devel go
     git clone https://aur.archlinux.org/yay.git ~/Dokumente/yay
@@ -133,7 +160,7 @@ if not pacman -Q ttf-twemoji-color > /dev/null 2>&1
 end
 
 # default browser: https://librewolf.net
-if not command -v librewolf > /dev/null
+if not is_command librewolf
     print "=== Installing librewolf... ==="
     yay librewolf-bin
 end
@@ -145,13 +172,13 @@ end
 download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/browser/librewolf.overrides.cfg ~/.librewolf/librewolf.overrides.cfg
 
 # backup browser: https://vivaldi.com
-if not command -v vivaldi > /dev/null
+if not is_command vivaldi
     print "=== Installing Vivaldi... ==="
     sudo pacman -S vivaldi
 end
 
 # default editor: https://vscodium.com
-if not command -v codium > /dev/null
+if not is_command codium
     print "=== Installing codium... ==="
     yay vscodium-bin
 end
@@ -161,7 +188,7 @@ print "=== Installing codium extensions... ==="
 curl -fsSL https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/vscodium/extensions.txt | xargs -L 1 codium --install-extension
 
 # Arch Linux update helper: https://github.com/Antiz96/arch-update
-if not command -v arch-update > /dev/null
+if not is_command arch-update
     print "=== Installing and configuring arch-update... ==="
     yay arch-update
     download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/arch-update/arch-update.conf ~/.config/arch-update/arch-update.conf
@@ -170,14 +197,14 @@ if not command -v arch-update > /dev/null
 end
 
 # GitHub cli tool: https://cli.github.com/
-if not command -v gh > /dev/null
+if not is_command gh
     print "=== Installing and setting up GitHub CLI... ==="
     sudo pacman -S github-cli
     gh auth login
 end
 
 # fast & modern Python package manager: https://docs.astral.sh/uv/
-if not command -v uv > /dev/null
+if not is_command uv
     print "=== Installing uv... ==="
     execute https://astral.sh/uv/install.sh
     set just_installed 1
@@ -188,14 +215,14 @@ if test "$just_installed" != 1
 end
 
 # automatically purge old files from trash: https://github.com/bneijt/autotrash
-if not command -v autotrash > /dev/null
+if not is_command autotrash
     print "=== Installing and configuring autotrash... ==="
     uv tool install autotrash
     autotrash -d 40 --install
 end
 
 # Linux onedrive sync client: https://github.com/abraunegg/onedrive
-if not command -v onedrive > /dev/null
+if not is_command onedrive
     print "=== Installing onedrive client... ==="
     yay onedrive-abraunegg
     sudo mkdir /var/log/onedrive
@@ -204,7 +231,7 @@ if not command -v onedrive > /dev/null
 end
 
 # well, it's Docker
-if not command -v docker > /dev/null
+if not is_command docker
     print "=== Installing rootless Docker... ==="
     download "https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/docker/daemon.json" ~/.config/docker/daemon.json
     execute https://get.docker.com/rootless
@@ -227,13 +254,13 @@ if not pacman -Q | grep -q fuse2
 end
 
 # Bruno (HTTP client): https://usebruno.com
-if not command -v bruno > /dev/null
+if not is_command bruno
     print "=== Installing Bruno... ==="
     yay bruno-bin
 end
 
 # Gimp: https://www.gimp.org
-if not command -v gimp > /dev/null
+if not is_command gimp
     print "=== Installing Gimp... ==="
     sudo pacman -S gimp
 end
@@ -247,13 +274,18 @@ if not test -d ~/.local/share/JetBrains/Toolbox/bin
 end
 
 # universal video downloader tool: https://github.com/yt-dlp/yt-dlp
-if not command -v yt-dlp > /dev/null
+if not is_command yt-dlp
     print "=== Installing yt-dlp... ==="
     download_sudo https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp /usr/local/bin/yt-dlp
     sudo chmod a+rx /usr/local/bin/yt-dlp
 end
 
 if sudo dmidecode -s system-manufacturer | grep -qi "Tuxedo"
+    # On laptop
+
+    # set cursor
+    print "=== Setting cursor... ==="
+    plasma-apply-cursortheme Bibata-Modern-Ice # alternative: Banana
     # TUXEDO specific tools and drivers
     set packages (pacman -Q | grep tuxedo | count)
     if test $packages -ne 3
@@ -269,8 +301,11 @@ if sudo dmidecode -s system-manufacturer | grep -qi "Tuxedo"
 else
     # Not on laptop
 
+    # set cursor
+    print "=== Setting cursor... ==="
+    plasma-apply-cursortheme Bibata-Modern-Ice # alternative: Banana
     # device manager for Logitech devices: https://github.com/pwr-Solaar/Solaar
-    if not command -v solaar > /dev/null
+    if not is_command solaar
         print "=== Installing solaar... ==="
         sudo pacman -S solaar
     end
@@ -282,32 +317,38 @@ else
     download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/solaar/rules.yaml ~/.config/solaar/rules.yaml
     sudo udevadm control --reload-rules
     # video editor: https://kdenlive.org
-    if not command -v kdenlive > /dev/null
+    if not is_command kdenlive
         print "=== Installing kdenlive... ==="
         yay kdenlive
     end
 end
 
+# color picker: https://apps.kde.org/kcolorchooser
+if not is_command kcolorchooser
+    print "=== Installing KColorChooser... ==="
+    yay kcolorchooser
+end
+
 # well, it's Signal
-if not command -v signal-desktop > /dev/null
+if not is_command signal-desktop
     print "=== Installing Signal Desktop... ==="
     yay signal-desktop
 end
 
 # well, it's Element
-if not command -v element-desktop > /dev/null
+if not is_command element-desktop
     print "=== Installing Element Desktop... ==="
     yay element-desktop
 end
 
 # disk usage analyzer tool
-if not command -v ncdu > /dev/null
+if not is_command ncdu
     print "=== Installing ncdu... ==="
     sudo pacman -S ncdu
 end
 
 # helper to install Proton versions
-if not command -v protonplus > /dev/null
+if not is_command protonplus
     print "=== Installing protonplus... ==="
     yay protonplus
 end
@@ -315,14 +356,6 @@ end
 # install KDE window open/close effects: https://github.com/Schneegans/Burn-My-Windows
 print "=== Installing KDE window open/close effects... ==="
 download_extract https://github.com/Schneegans/Burn-My-Windows/releases/latest/download/burn_my_windows_kwin6.tar.gz ~/.local/share/kwin/effects
-
-# install KDE cursor themes:
-#  - https://github.com/ful1e5/Bibata_Cursor
-#  - https://github.com/ful1e5/banana-cursor
-print "=== Installing KDE Bibata cursor (default cursor)... ==="
-download_extract https://github.com/ful1e5/Bibata_Cursor/releases/latest/download/Bibata-Modern-Ice.tar.xz ~/.icons
-print "=== Installing KDE Banana cursor (fun cursor)... ==="
-download_extract https://github.com/ful1e5/banana-cursor/releases/latest/download/banana-all.tar.xz ~/.icons
 
 # rerate CachyOS mirrors
 if test -e ~/.cachymirrors

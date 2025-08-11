@@ -13,6 +13,10 @@ function is_command
     command -v $argv[1] > /dev/null
 end
 
+function is_customized
+    test (head -n 1 $argv[1]) = "# custom"
+end
+
 function download
     if test (count $argv) -ne 2
         print "Download function received not exact 2 params!"
@@ -66,7 +70,7 @@ if not test -e ~/.path_vars
 end
 
 # initialize fish config if never done before
-if not test (head -n 1 ~/.config/fish/config.fish) = "# custom"
+if not is_customized ~/.config/fish/config.fish
     print "=== Detected fish config in initial state, overwriting with custom config ==="
     cp ~/.config/fish/config.fish ~/.config/fish/config.fish.backup
     download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/fish/config.fish ~/.config/fish/config.fish
@@ -77,7 +81,8 @@ end
 rm -rf -- ~/.bash_history ~/.bash_logout ~/.var ~/.zshrc ~/Musik ~/Öffentlich ~/Vorlagen
 
 # copy and set wallpapers
-if not test (find ~/.local/share/wallpapers/cachygalaxy*.jpg | wc -l) = 2
+mkdir -p ~/.local/share/wallpapers/
+if not test (count ~/.local/share/wallpapers/cachygalaxy*.jpg) = 2
     print "=== Downloading wallpapers to system... ==="
     download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/desktop/wallpapers/cachygalaxy99.jpg ~/.local/share/wallpapers/cachygalaxy99.jpg
     download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/desktop/wallpapers/cachygalaxy99-bernd.jpg ~/.local/share/wallpapers/cachygalaxy99-bernd.jpg
@@ -113,10 +118,16 @@ net.ipv6.conf.all.use_tempaddr = 2
 net.ipv6.conf.default.use_tempaddr = 2" | sudo tee -a /etc/sysctl.d/40-ipv6.conf > /dev/null
 end
 
+if not is_customized /etc/ssh/ssh_config
+    print "=== Detected ssh_config in initial state, overwriting with custom config ==="
+    sudo cp /etc/ssh/ssh_config /etc/ssh/ssh_config.backup
+    download_sudo https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/ssh/ssh_config /etc/ssh/ssh_config
+end
+
 # unused packages
 if is_command plasma-browser-integration-host
     print "=== Removing 'plasma-browser-integration-host'... ==="
-    yay -R plasma-browser-integration-host
+    yay -R plasma-browser-integration
 end
 
 # 'ls' alternative: https://lla.chaqchase.com/docs/about/introduction
@@ -228,6 +239,9 @@ if not is_command onedrive
     sudo mkdir /var/log/onedrive
     sudo chown root:(whoami) /var/log/onedrive
     sudo chmod 0775 /var/log/onedrive
+    mkdir -p ~/.config/onedrive
+    download "https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/onedrive/config" ~/.config/onedrive/config
+    download "https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/onedrive/sync_list" ~/.config/onedrive/sync_list
 end
 
 # well, it's Docker

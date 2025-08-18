@@ -1,8 +1,9 @@
 {
-    "security.workspace.trust.untrustedFiles": "open",
     "chat.commandCenter.enabled": false,
-    "workbench.editor.highlightModifiedTabs": true,
     "editor.renderWhitespace": "all",
+    "explorer.confirmDelete": false,
     "explorer.confirmPasteNative": false,
-    "explorer.confirmDragAndDrop": false
+    "explorer.confirmDragAndDrop": false,
+    "security.workspace.trust.untrustedFiles": "open",
+    "workbench.editor.highlightModifiedTabs": true
 }

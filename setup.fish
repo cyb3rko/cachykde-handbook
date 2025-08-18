@@ -180,6 +180,7 @@ if not test -e ~/.librewolf/librewolf.overrides.cfg
 else
     print "=== Updating custom librewolf configuration... ==="
 end
+cp ~/.librewolf/librewolf.overrides.cfg ~/.librewolf/librewolf.overrides.cfg.backup
 download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/browser/librewolf.overrides.cfg ~/.librewolf/librewolf.overrides.cfg
 
 # backup browser: https://vivaldi.com
@@ -193,6 +194,9 @@ if not is_command codium
     print "=== Installing codium... ==="
     yay vscodium-bin
 end
+print "=== Updating custom VSCodium configuration... ==="
+cp ~/.config/VSCodium/User/settings.json ~/.config/VSCodium/User/settings.json.backup
+download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/vscodium/settings.json ~/.config/VSCodium/User/settings.json
 print "=== Installing codium extensions... ==="
 # Save currently installed extensions with:
 # codium --list-extensions > vscodium/extensions.txt

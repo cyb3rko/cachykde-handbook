@@ -2,15 +2,18 @@
 !.kotlin/*
 !venv/*
 !.venv/*
+!.ruff_cache/*
+!__pycache__/*
 !.gradle/*
 !.idea/libraries/*
 !.idea/caches/*
 !.cache/*
-!__pycache__/*
 !node_modules/*
 !.next/*
+!generated/prisma/*
 !/Programming/Projects/Android/**/build/*
 !/Programming/Projects/Android/**/.cxx/*
 !/Programming/Projects/Web/**/build/*
+!/Programming/Projects/Cross/**/build/*
 
 /Programming

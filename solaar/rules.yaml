@@ -11,3 +11,19 @@
   - XF86_AudioLowerVolume
   - click
 ...
+---
+- Key: [Calculator, pressed]
+- Execute: qalculate-qt
+...
+---
+- Key: [Mission Control/Task View, pressed]
+- KeyPress:
+  - [Super_L, g]
+  - click
+...
+---
+- Key: [Dashboard Launchpad/Action Center, pressed]
+- KeyPress:
+  - [Super_L, w]
+  - click
+...

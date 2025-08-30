@@ -17,6 +17,30 @@ function is_customized
     test (head -n 1 $argv[1]) = "# custom"
 end
 
+function install
+    if test (count $argv) -ne 1
+        print "Install function received not exact 1 param!"
+        exit 1
+    end
+    paru $argv[1]
+end
+
+function install-repo
+    if test (count $argv) -ne 1
+        print "Install-repo function received not exact 1 param!"
+        exit 1
+    end
+    paru --repo $argv[1]
+end
+
+function uninstall
+    if test (count $argv) -ne 1
+        print "Uninstall function received not exact 1 param!"
+        exit 1
+    end
+    paru -Rc --noconfirm $argv[1]
+end
+
 function download
     if test (count $argv) -ne 2
         print "Download function received not exact 2 params!"
@@ -71,10 +95,26 @@ end
 
 # initialize fish config if never done before
 if not is_customized ~/.config/fish/config.fish
-    print "=== Detected fish config in initial state, overwriting with custom config ==="
+    print "=== Detected fish config in initial state, overwriting with custom config... ==="
     cp ~/.config/fish/config.fish ~/.config/fish/config.fish.backup
     download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/fish/config.fish ~/.config/fish/config.fish
     source ~/.config/fish/config.fish
+end
+
+# package manager and AUR helper: https://github.com/Morganamilo/paru
+if not is_command paru
+    print "=== Installing paru...  ==="
+    sudo pacman -S --noconfirm paru
+end
+
+if is_command yay
+    print "=== Uninstalling yay and cleaning up yay cache...  ==="
+    if pacman -Qs yay-bin > /dev/null
+        uninstall yay-bin
+    else
+        uninstall yay
+    end
+    rm -rf -- ~/.cache/yay
 end
 
 # remove unused files and dirs
@@ -127,7 +167,7 @@ end
 # unused packages
 if is_command plasma-browser-integration-host
     print "=== Removing 'plasma-browser-integration-host'... ==="
-    yay -R plasma-browser-integration
+    uninstall plasma-browser-integration
 end
 
 # 'ls' alternative: https://lla.chaqchase.com/docs/about/introduction
@@ -148,32 +188,22 @@ end
 # cool resources monitor: https://github.com/aristocratos/btop
 if not is_command btop
     print "=== Installing btop... ==="
-    sudo pacman -S btop
+    install-repo btop
 end
 if not test -e ~/.config/btop/btop.conf
     print "=== Installing btop configuration... ==="
     download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/btop/btop.conf ~/.config/btop/btop.conf
 end
 
-# package manager: https://github.com/Jguer/yay
-if not is_command yay
-    print "=== Installing yay from source... ==="
-    sudo pacman -S --needed --noconfirm git base-devel go
-    git clone https://aur.archlinux.org/yay.git ~/Dokumente/yay
-    cd ~/Dokumente/yay
-    makepkg -si
-    rm -f -- ~/Dokumente/yay
-end
-
 if not pacman -Q ttf-twemoji-color > /dev/null 2>&1
     print "=== Installing emoji font to fix rendering issues... ==="
-    yay ttf-twemoji-color
+    install ttf-twemoji-color
 end
 
 # default browser: https://librewolf.net
 if not is_command librewolf
     print "=== Installing librewolf... ==="
-    yay librewolf-bin
+    install librewolf-bin
 end
 if not test -e ~/.librewolf/librewolf.overrides.cfg
     print "=== Installing custom librewolf configuration... ==="
@@ -186,13 +216,13 @@ download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/
 # backup browser: https://vivaldi.com
 if not is_command vivaldi
     print "=== Installing Vivaldi... ==="
-    sudo pacman -S vivaldi
+    install vivaldi
 end
 
 # default editor: https://vscodium.com
 if not is_command codium
     print "=== Installing codium... ==="
-    yay vscodium-bin
+    install vscodium-bin
 end
 print "=== Updating custom VSCodium configuration... ==="
 cp ~/.config/VSCodium/User/settings.json ~/.config/VSCodium/User/settings.json.backup
@@ -202,11 +232,14 @@ print "=== Installing codium extensions... ==="
 # codium --list-extensions > vscodium/extensions.txt
 curl -fsSL https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/vscodium/extensions.txt | xargs -L 1 codium --install-extension
 
-# Arch Linux update helper: https://github.com/Antiz96/arch-update
+# Arch Linux update helper: https://github.com/CachyOS/cachy-update
 if not is_command arch-update
-    print "=== Installing and configuring arch-update... ==="
-    yay arch-update
-    download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/arch-update/arch-update.conf ~/.config/arch-update/arch-update.conf
+    print "=== Installing and configuring arch-update (cachy-update)... ==="
+    install-repo cachy-update
+    download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/cachy-update/arch-update.conf ~/.config/arch-update/arch-update.conf
+    if test -f ~/.config/autostart/arch-update-tray.desktop
+        rm ~/.config/autostart/arch-update-tray.desktop
+    end
     arch-update --tray --enable
     systemctl --user enable --now arch-update.timer
 end
@@ -214,7 +247,7 @@ end
 # GitHub cli tool: https://cli.github.com/
 if not is_command gh
     print "=== Installing and setting up GitHub CLI... ==="
-    sudo pacman -S github-cli
+    install-repo github-cli
     gh auth login
 end
 
@@ -239,7 +272,7 @@ end
 # Linux onedrive sync client: https://github.com/abraunegg/onedrive
 if not is_command onedrive
     print "=== Installing onedrive client... ==="
-    yay onedrive-abraunegg
+    install onedrive-abraunegg
     sudo mkdir /var/log/onedrive
     sudo chown root:(whoami) /var/log/onedrive
     sudo chmod 0775 /var/log/onedrive
@@ -266,21 +299,21 @@ if not is_command docker
 end
 
 # required for AppImages
-if not pacman -Q | grep -q fuse2
-    print "=== Installing fuse2 to be able to use AppImages... ==="
-    sudo pacman -S fuse
+if not pacman -Q | grep -q fuse3
+    print "=== Installing fuse3 to be able to use AppImages... ==="
+    install-repo fuse3
 end
 
 # Bruno (HTTP client): https://usebruno.com
 if not is_command bruno
     print "=== Installing Bruno... ==="
-    yay bruno-bin
+    install bruno-bin
 end
 
 # Gimp: https://www.gimp.org
 if not is_command gimp
     print "=== Installing Gimp... ==="
-    sudo pacman -S gimp
+    install-repo gimp
 end
 
 # JetBrains toolbox for JetBrains IDEs: https://www.jetbrains.com/toolbox-app/
@@ -308,9 +341,9 @@ if sudo dmidecode -s system-manufacturer | grep -qi "Tuxedo"
     set packages (pacman -Q | grep tuxedo | count)
     if test $packages -ne 3
         print "=== Tuxedo detected - Installing tools and drivers... ==="
-        yay tuxedo-drivers-dkms
-        yay tuxedo-control-center-bin
-        yay tuxedo-webfai-creator-bin
+        install tuxedo-drivers-dkms
+        install tuxedo-control-center-bin
+        install tuxedo-webfai-creator-bin
     end
     if not test -f ~/Dokumente/tuxedo/TCC_Profiles_Backup.json
         print "=== Tuxedo - Fetching control center profiles... ==="
@@ -325,50 +358,51 @@ else
     # device manager for Logitech devices: https://github.com/pwr-Solaar/Solaar
     if not is_command solaar
         print "=== Installing solaar... ==="
-        sudo pacman -S solaar
+        install-repo solaar
     end
     # configure autostart
     download_sudo https://raw.githubusercontent.com/pwr-Solaar/Solaar/refs/heads/master/share/autostart/solaar.desktop /etc/xdg/autostart/solaar.desktop
     # give permissions
     download_sudo https://raw.githubusercontent.com/pwr-Solaar/Solaar/master/rules.d-uinput/42-logitech-unify-permissions.rules /etc/udev/rules.d/42-logitech-unify-permissions.rules
     # update rules
+    download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/solaar/config.yaml ~/.config/solaar/config.yaml
     download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/solaar/rules.yaml ~/.config/solaar/rules.yaml
     sudo udevadm control --reload-rules
     # video editor: https://kdenlive.org
     if not is_command kdenlive
         print "=== Installing kdenlive... ==="
-        yay kdenlive
+        install-repo kdenlive
     end
 end
 
 # color picker: https://apps.kde.org/kcolorchooser
 if not is_command kcolorchooser
     print "=== Installing KColorChooser... ==="
-    yay kcolorchooser
+    install-repo kcolorchooser
 end
 
 # well, it's Signal
 if not is_command signal-desktop
     print "=== Installing Signal Desktop... ==="
-    yay signal-desktop
+    install-repo signal-desktop
 end
 
 # well, it's Element
 if not is_command element-desktop
     print "=== Installing Element Desktop... ==="
-    yay element-desktop
+    install-repo element-desktop
 end
 
 # disk usage analyzer tool
 if not is_command ncdu
     print "=== Installing ncdu... ==="
-    sudo pacman -S ncdu
+    install-repo ncdu
 end
 
 # helper to install Proton versions
 if not is_command protonplus
     print "=== Installing protonplus... ==="
-    yay protonplus
+    install-repo protonplus
 end
 
 # install KDE window open/close effects: https://github.com/Schneegans/Burn-My-Windows

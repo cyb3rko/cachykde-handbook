@@ -4,11 +4,7 @@ function setabbreviations
   abbr ls "lla -l --no-dotfiles"
   abbr ll "lla -l"
   abbr lsd "lla -t -d"
-  abbr update "yay"
-  abbr install "yay"
-  abbr remove "yay -R"
-  abbr autoremove "sudo pacman -Rsn (pacman -Qtdq)"
-  abbr clean "yay -Scc"
+  alias cachy-update="arch-update"
 
   abbr wsensor "watch -d -n 1 sensors"
   abbr dns-restart "sudo systemctl restart systemd-resolved"

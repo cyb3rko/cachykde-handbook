@@ -13,6 +13,10 @@ function is_command
     command -v $argv[1] > /dev/null
 end
 
+function is_function
+    functions -q $argv[1]
+end
+
 function is_customized
     test (head -n 1 $argv[1]) = "# custom"
 end
@@ -268,7 +272,7 @@ if not is_command autotrash
 end
 
 # node version manager: https://github.com/nvm-sh/nvm
-if not nvm
+if not is_function nvm
     print "=== Installing nvm and Node... ==="
     install nvm
     source ~/.config/fish/config.fish
@@ -276,7 +280,7 @@ if not nvm
 end
 
 # node package manager: https://pnpm.io
-if not pnpm
+if not is_command pnpm
     print "=== Installing pnpm... ==="
     execute https://get.pnpm.io/install.sh
 else

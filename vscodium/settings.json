@@ -4,6 +4,7 @@
     "explorer.confirmDelete": false,
     "explorer.confirmPasteNative": false,
     "explorer.confirmDragAndDrop": false,
+    "git.autofetch": true,
     "security.workspace.trust.untrustedFiles": "open",
     "workbench.editor.highlightModifiedTabs": true
 }

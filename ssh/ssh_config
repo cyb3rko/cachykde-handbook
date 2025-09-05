@@ -22,7 +22,6 @@ Include /etc/ssh/ssh_config.d/*.conf
 
 Host *
   Protocol 2
-  StrictHostKeyChecking ask
   ServerAliveInterval 100
 #   IdentityFile ~/.ssh/id_rsa
 #   IdentityFile ~/.ssh/id_dsa

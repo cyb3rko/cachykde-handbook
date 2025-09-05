@@ -251,13 +251,11 @@ if not is_command gh
     gh auth login
 end
 
-# fast & modern Python package manager: https://docs.astral.sh/uv/
+# fast & modern Python package manager: https://docs.astral.sh/uv
 if not is_command uv
     print "=== Installing uv... ==="
     execute https://astral.sh/uv/install.sh
-    set just_installed 1
-end
-if test "$just_installed" != 1
+else
     print "=== Self-updating uv... ==="
     uv self update
 end
@@ -267,6 +265,23 @@ if not is_command autotrash
     print "=== Installing and configuring autotrash... ==="
     uv tool install autotrash
     autotrash -d 40 --install
+end
+
+# node version manager: https://github.com/nvm-sh/nvm
+if not nvm
+    print "=== Installing nvm and Node... ==="
+    install nvm
+    source ~/.config/fish/config.fish
+    nvm use node
+end
+
+# node package manager: https://pnpm.io
+if not pnpm
+    print "=== Installing pnpm... ==="
+    execute https://get.pnpm.io/install.sh
+else
+    print "=== Self-updating pnpm... ==="
+    pnpm self-update
 end
 
 # Linux onedrive sync client: https://github.com/abraunegg/onedrive

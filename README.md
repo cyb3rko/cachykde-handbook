@@ -12,14 +12,15 @@ System info: CachyOS + KDE Plasma Wayland + fish shell
 - [Resource Management](#resource-management)
   - [Large file and folder monitor](#large-file-and-folder-monitor)
   - [Find large files](#find-large-files)
-  - [Clean package manager caches](#clean-package-manager-caches)
   - [Rerate package mirrors](#rerate-package-mirros)
   - [AutoTrash](#autotrash)
   - [journalctl](#journalctl)
 - [Services](#services)
-  - [SSH Session Keep-Alive](#ssh-session-keep-alive)
+  - [SSH](#ssh)
   - [Java](#java)
   - [GPG](#gpg)
+- [Desktop](#desktop)
+  - [System Tray](#system-tray)
 - [Applications](#applications)
   - [AppImages](#appimages)
   - [Librewolf](#librewolf)
@@ -58,14 +59,6 @@ Find files in current directory with a specified minimum size (in this example 1
 find . -type f -size +100M
 ```
 
-### Clean package manager caches
-
-Call this to start interactive package manager cache clearing:
-
-```bash
-yay -Sc
-```
-
 ### Rerate package mirros
 
 ```bash
@@ -89,21 +82,15 @@ See space used by system logs:
 journalctl --disk-usage
 ```
 
-Set maximum log retention time in `/etc/systemd/journald.conf`:
-
-```bash
-MaxRetentionSec=1month
-```
-
 ## Services
 
-### SSH Session Keep-Alive
+### SSH
 
-Edit `/etc/ssh/ssh_config` and append:
+Replace `/etc/ssh/ssh_config` with customized [ssh_config](ssh/ssh_config), which:
+- enforces SSHv2
+- sets server alive interval (client-to-server ping)
 
-```bash
-ServerAliveInterval 60
-```
+Man page: https://linux.die.net/man/5/ssh_config
 
 ### Java
 
@@ -152,6 +139,22 @@ chown -R $(whoami) ~/.gnupg/
 find ~/.gnupg -type f -exec chmod 600 {} \;
 find ~/.gnupg -type d -exec chmod 700 {} \;
 ```
+
+## Desktop
+
+### System Tray
+
+![desktop/tray.png](desktop/tray.png)
+
+Details:
+- spacers:
+  - dynamic spacers on both ends left and right
+  - spacer between applications and system icons: 70 (desktop) / 50 (laptop)
+- height: 50 (desktop) / 46 (laptop)
+- time WITH seconds
+- custom date:
+  - format: `ddd, d.MM.yy`
+  - font: Noto Sans 16pt (desktop) / Noto Sans 10pt (laptop)
 
 ## Applications
 

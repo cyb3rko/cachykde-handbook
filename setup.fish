@@ -18,7 +18,7 @@ function is_function
 end
 
 function is_customized
-    test (head -n 1 $argv[1]) = "# custom"
+    test -e $argv[1] && test (head -n 1 $argv[1]) = "# custom"
 end
 
 function install
@@ -80,15 +80,29 @@ function download_extract
     end
 end
 
+function fetch
+    if test (count $argv) -ne 1
+        print "Fetch function received not exact 1 param!"
+        exit 1
+    end
+    for line in $(curl -fsSL $argv[1])
+        echo $line
+    end
+end
+
 function execute
     if test (count $argv) -ne 1
         print "Execute function received not exact 1 param!"
         exit 1
     end
-    curl -fsSL $argv[1] | sh
+    fetch $argv[1] | sh
 end
 
 trap handle_sigint SIGINT
+
+# lock down root user
+print "=== Locking down root... ==="
+sudo passwd --lock root
 
 if not test -e ~/.env
     touch ~/.env
@@ -96,6 +110,14 @@ end
 if not test -e ~/.path_vars
     touch ~/.path_vars
 end
+
+if not is_customized ~/.gitconfig
+    print "=== Configuring .gitconfig... ==="
+    download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/.gitconfig ~/.gitconfig
+end
+
+# remove unused files and dirs
+rm -rf -- ~/.bash_history ~/.bash_logout ~/.var ~/.zshrc ~/Musik ~/Öffentlich ~/Vorlagen
 
 # initialize fish config if never done before
 if not is_customized ~/.config/fish/config.fish
@@ -121,8 +143,31 @@ if is_command yay
     rm -rf -- ~/.cache/yay
 end
 
-# remove unused files and dirs
-rm -rf -- ~/.bash_history ~/.bash_logout ~/.var ~/.zshrc ~/Musik ~/Öffentlich ~/Vorlagen
+# 'ls' alternative: https://lla.chaqchase.com/docs/about/introduction
+if not is_command lla
+    print "=== Installing lla as 'ls' alternative... ==="
+    execute https://raw.githubusercontent.com/chaqchase/lla/main/install.sh
+end
+if not test -e ~/.config/lla/config.toml
+    print "=== Installing lla configuration... ==="
+    download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/lla/config.toml ~/.config/lla/config.toml
+end
+
+# 'cat' clone: https://github.com/sharkdp/bat
+if not test -e ~/.config/bat/config
+    print "=== Installing bat configuration... ==="
+    download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/bat/config ~/.config/bat/config
+end
+
+# cool resources monitor: https://github.com/aristocratos/btop
+if not is_command btop
+    print "=== Installing btop... ==="
+    install-repo btop
+end
+if not test -e ~/.config/btop/btop.conf
+    print "=== Installing btop configuration... ==="
+    download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/btop/btop.conf ~/.config/btop/btop.conf
+end
 
 # copy and set wallpapers
 mkdir -p ~/.local/share/wallpapers/
@@ -141,11 +186,6 @@ print "=== Installing KDE Bibata cursor (default cursor)... ==="
 download_extract https://github.com/ful1e5/Bibata_Cursor/releases/latest/download/Bibata-Modern-Ice.tar.xz ~/.icons
 print "=== Installing KDE Banana cursor (fun cursor)... ==="
 download_extract https://github.com/ful1e5/banana-cursor/releases/latest/download/banana-all.tar.xz ~/.icons
-
-if not test -e ~/.gitconfig
-    print "=== Configuring .gitconfig... ==="
-    download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/.gitconfig ~/.gitconfig
-end
 
 if test -d ~/.gnupg/
     print "=== Making sure GPG file permissions are correct... ==="
@@ -172,31 +212,6 @@ end
 if is_command plasma-browser-integration-host
     print "=== Removing 'plasma-browser-integration-host'... ==="
     uninstall plasma-browser-integration
-end
-
-# 'ls' alternative: https://lla.chaqchase.com/docs/about/introduction
-if not is_command lla
-    print "=== Installing lla as 'ls' alternative... ==="
-    execute https://raw.githubusercontent.com/chaqchase/lla/main/install.sh
-end
-if not test -e ~/.config/lla/config.toml
-    print "=== Installing lla configuration... ==="
-    download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/lla/config.toml ~/.config/lla/config.toml
-end
-
-if not test -e ~/.config/bat/config
-    print "=== Installing bat configuration... ==="
-    download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/bat/config ~/.config/bat/config
-end
-
-# cool resources monitor: https://github.com/aristocratos/btop
-if not is_command btop
-    print "=== Installing btop... ==="
-    install-repo btop
-end
-if not test -e ~/.config/btop/btop.conf
-    print "=== Installing btop configuration... ==="
-    download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/btop/btop.conf ~/.config/btop/btop.conf
 end
 
 if not pacman -Q ttf-twemoji-color > /dev/null 2>&1

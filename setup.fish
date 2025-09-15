@@ -104,6 +104,18 @@ trap handle_sigint SIGINT
 print "=== Locking down root... ==="
 sudo passwd --lock root
 
+# configure ufw (Firewall) defaults
+print "=== Configuring ufw (Firewall)... ==="
+sudo ufw reset
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+sudo ufw default deny routed
+
+# configure ufw rules for KDE Connect
+sudo ufw allow 1714:1764/udp
+sudo ufw allow 1714:1764/tcp
+sudo ufw reload
+
 if not test -e ~/.env
     touch ~/.env
 end

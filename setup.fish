@@ -106,7 +106,7 @@ sudo passwd --lock root
 
 # configure ufw (Firewall) defaults
 print "=== Configuring ufw (Firewall)... ==="
-sudo ufw reset
+echo "y" | sudo ufw reset
 sudo ufw default deny incoming
 sudo ufw default allow outgoing
 sudo ufw default deny routed
@@ -114,7 +114,7 @@ sudo ufw default deny routed
 # configure ufw rules for KDE Connect
 sudo ufw allow 1714:1764/udp
 sudo ufw allow 1714:1764/tcp
-sudo ufw reload
+sudo ufw enable
 
 if not test -e ~/.env
     touch ~/.env
@@ -200,6 +200,12 @@ print "=== Installing KDE Banana cursor (fun cursor)... ==="
 download_extract https://github.com/ful1e5/banana-cursor/releases/latest/download/banana-all.tar.xz ~/.icons
 
 if test -d ~/.gnupg/
+    if test -e ~/.gnupg/gpg.conf
+      print "=== Configuring GPG agent... ==="
+      echo "enable-ssh-support" >> ~/.gnupg/gpg-agent.conf
+      echo "use-agent" >> ~/.gnupg/gpg.conf
+      pg-connect-agent reloadagent /bye
+    end
     print "=== Making sure GPG file permissions are correct... ==="
     chown -R $(whoami) ~/.gnupg/
     find ~/.gnupg/ -type f -exec chmod 600 {} \; # Owner read/write (600) for files
@@ -289,6 +295,20 @@ if not is_command uv
 else
     print "=== Self-updating uv... ==="
     uv self update
+    print "=== Updating uvx tools... ==="
+    uv tool upgrade --all
+end
+
+# Nitrokey 3 software: https://www.nitrokey.com/products/nitrokeys
+if not is_command nitropy
+    print "=== Installing nitropy... ==="
+    paru python-pynitrokey
+    nitropy version
+    wget https://raw.githubusercontent.com/Nitrokey/nitrokey-udev-rules/main/41-nitrokey.rules
+    sudo mv 41-nitrokey.rules /etc/udev/rules.d/
+    sudo chown root:root /etc/udev/rules.d/41-nitrokey.rules
+    sudo chmod 644 /etc/udev/rules.d/41-nitrokey.rules
+    sudo udevadm control --reload-rules && sudo udevadm trigger
 end
 
 # automatically purge old files from trash: https://github.com/bneijt/autotrash

@@ -59,6 +59,13 @@ function pathsource
   end < "$pathfile"
 end
 
+function setsshsock
+  set -e SSH_AGENT_PID
+  if not set -q gnupg_SSH_AUTH_SOCK_by or test $gnupg_SSH_AUTH_SOCK_by -ne $fish_pid
+      set -gx SSH_AUTH_SOCK (gpgconf --list-dirs agent-ssh-socket)
+  end
+end
+
 function nvm
     bash -c "source ~/.nvm/nvm.sh; nvm $argv"
 end
@@ -67,6 +74,7 @@ source /usr/share/cachyos-fish-config/cachyos-config.fish
 setabbreviations
 envsource ~/.env
 pathsource ~/.path_vars
+setsshsock
 
 set -U fish_user_paths /home/niko/.nvm/versions/node/*/bin $fish_user_paths
 

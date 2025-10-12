@@ -318,6 +318,12 @@ if not is_command autotrash
     autotrash -d 40 --install
 end
 
+if not is_command pre-commit
+    print "=== Installing pre-commit... ==="
+    uv tool install pre-commit --with pre-commit-uv
+    pre-commit --version
+end
+
 # node version manager: https://github.com/nvm-sh/nvm
 if not is_function nvm
     print "=== Installing nvm and Node... ==="

@@ -204,7 +204,7 @@ if test -d ~/.gnupg/
       print "=== Configuring GPG agent... ==="
       echo "enable-ssh-support" >> ~/.gnupg/gpg-agent.conf
       echo "use-agent" >> ~/.gnupg/gpg.conf
-      pg-connect-agent reloadagent /bye
+      gpg-connect-agent reloadagent /bye
     end
     print "=== Making sure GPG file permissions are correct... ==="
     chown -R $(whoami) ~/.gnupg/
@@ -338,7 +338,7 @@ if not is_command pnpm
     execute https://get.pnpm.io/install.sh
 else
     print "=== Self-updating pnpm... ==="
-    pnpm self-update
+    pnpm self-update | grep -v "^Nothing to stop."
 end
 
 # Linux onedrive sync client: https://github.com/abraunegg/onedrive
@@ -491,7 +491,7 @@ if test -e ~/.cachymirrors
     end
 end
 print "=== Rating CachyOS mirrors... ==="
-sudo cachyos-rate-mirrors
+sudo cachyos-rate-mirrors | grep -v "^Server = "
 set current_stamp (date +%s)
 echo $current_stamp > ~/.cachymirrors
 print "=== Setup finished :) ==="

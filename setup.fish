@@ -106,10 +106,10 @@ sudo passwd --lock root
 
 # configure ufw (Firewall) defaults
 print "=== Configuring ufw (Firewall)... ==="
-echo "y" | sudo ufw reset
-sudo ufw default deny incoming
-sudo ufw default allow outgoing
-sudo ufw default deny routed
+echo "y" | sudo ufw reset | grep -v "WARN: "
+sudo ufw default deny incoming | grep -v "^(be sure to"
+sudo ufw default allow outgoing | grep -v "^(be sure to"
+sudo ufw default deny routed | grep -v "^(be sure to"
 
 # configure ufw rules for KDE Connect
 sudo ufw allow 1714:1764/udp
@@ -267,7 +267,7 @@ download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/
 print "=== Installing codium extensions... ==="
 # Save currently installed extensions with:
 # codium --list-extensions > vscodium/extensions.txt
-curl -fsSL https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/vscodium/extensions.txt | xargs -L 1 codium --install-extension
+fetch https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/vscodium/extensions.txt | xargs -L 1 codium --install-extension
 
 # Arch Linux update helper: https://github.com/CachyOS/cachy-update
 if not is_command arch-update

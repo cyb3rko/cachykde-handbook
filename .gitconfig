@@ -1,3 +1,5 @@
+# custom
+
 [alias]
 	hub = "!xdg-open $(git remote get-url origin 2>/dev/null) >/dev/null 2>&1"
 [branch]
@@ -14,16 +16,22 @@
 	helper = !/usr/bin/gh auth git-credential
 [diff]
 	submodule = log
+  tool = meld
+[difftool]
+  prompt = false
 [fetch]
 	prune = true
 [help]
-	autocorrect = 30
+	autocorrect = 15
 [init]
 	defaultBranch = main
 [log]
 	date = iso
 [merge]
 	conflictStyle = zdiff3
+  tool = meld
+[mergetool]
+  prompt = false
 [pull]
 	rebase = true
 [push]

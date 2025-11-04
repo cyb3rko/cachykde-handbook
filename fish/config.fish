@@ -4,8 +4,9 @@ function setabbreviations
   abbr ls "lla -l --no-dotfiles"
   abbr ll "lla -l"
   abbr lsd "lla -t -d"
-  abbr cat "bat"
+  alias cat="bat"
   alias cachy-update="arch-update"
+  alias code="codium"
 
   abbr wsensor "watch -d -n 1 sensors"
   abbr dns-restart "sudo systemctl restart systemd-resolved"

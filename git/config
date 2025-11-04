@@ -1,0 +1,51 @@
+# custom
+
+[alias]
+  hub = "!xdg-open $(git remote get-url origin 2>/dev/null) >/dev/null 2>&1"
+[branch]
+  sort = -committerdate
+[commit]
+  gpgsign = true
+  verbose = true
+[core]
+  autocrlf = input
+  editor = codium
+[credential "https://gist.github.com"]
+  helper = !/usr/bin/gh auth git-credential
+[credential "https://github.com"]
+  helper = !/usr/bin/gh auth git-credential
+[diff]
+  submodule = log
+  tool = meld
+[difftool]
+  prompt = false
+[fetch]
+  prune = true
+[help]
+  autocorrect = 15
+[init]
+  defaultBranch = main
+[log]
+  date = iso
+[merge]
+  conflictStyle = zdiff3
+  tool = meld
+[mergetool]
+  prompt = false
+[pull]
+  rebase = true
+[push]
+  autoSetupRemote = true
+[rebase]
+  autoStash = true
+  autosquash = true
+  missingCommitsCheck = error
+[status]
+  submoduleSummary = true
+[tag]
+  forceSignAnnotated = true
+  gpgSign = true
+[user]
+  name = Niko Diamadis
+  email = cyb3rko@pm.me
+  signingKey = F9D443E6B5460F7BABB9731027D69B8D68305327

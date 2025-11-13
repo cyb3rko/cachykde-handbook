@@ -98,6 +98,16 @@ function execute
   fetch $argv[1] | sh
 end
 
+# function to replace content in file:
+#   replace file.txt "current_content" "new_content"
+function replace
+  if test (count $argv) -ne 3
+    print "Replace function received not exact 3 params!"
+    exit 1
+  end
+  sed -i "s/$argv[2]/$argv[3]/g" $argv[1]
+end
+
 trap handle_sigint SIGINT
 
 # lock down root user
@@ -169,6 +179,30 @@ end
 if not test -e ~/.config/bat/config
   print "=== Installing bat configuration... ==="
   download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/bat/config ~/.config/bat/config
+end
+
+# combined tracert and ping tool: https://github.com/traviscross/mtr
+# (for manual usage and required for zoom testing)
+if not is_command mtr
+  print "=== Installing mtr... ==="
+  install-repo mtr
+end
+
+if test -e ~/.config/zoomus.conf
+  print "=== Configuring Zoom client... ==="
+  replace ~/.config/zoomus.conf "autoPlayGif=false" "autoPlayGif=true"
+  replace ~/.config/zoomus.conf "captureHDCamera=false" "captureHDCamera=true"
+  replace ~/.config/zoomus.conf "playSoundForNewMessage=false" "playSoundForNewMessage=true"
+  replace ~/.config/zoomus.conf "showSystemTitlebar=false" "showSystemTitlebar=true"
+  replace ~/.config/zoomus.conf "timeFormat12HoursEnable=true" "timeFormat12HoursEnable=false"
+  replace ~/.config/zoomus.conf "useSystemTheme=false" "useSystemTheme=true"
+end
+
+# file search tool: https://github.com/cboxdoerfer/fsearch
+if not is_command fsearch
+  print "=== Installing and configuring fsearch... ==="
+  install fsearch-git
+  download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/fsearch/fsearch.conf ~/.config/fsearch/fsearch.conf
 end
 
 # cool resources monitor: https://github.com/aristocratos/btop

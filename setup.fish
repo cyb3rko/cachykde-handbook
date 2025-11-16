@@ -21,6 +21,14 @@ function is_customized
   test -e $argv[1] && test (head -n 1 $argv[1]) = "# custom"
 end
 
+function last_chars
+  if test (count $argv) -ne 2
+    echo "Last_chars function received not exact 2 params!"
+    exit 1
+  end
+  echo (string sub -s (math (string length $argv[2]) - 1) -l $argv[1] $argv[2])
+end
+
 function install
   if test (count $argv) -ne 1
     print "Install function received not exact 1 param!"
@@ -29,9 +37,9 @@ function install
   paru $argv[1]
 end
 
-function install-repo
+function install_repo
   if test (count $argv) -ne 1
-    print "Install-repo function received not exact 1 param!"
+    print "Install_repo function received not exact 1 param!"
     exit 1
   end
   paru --repo $argv[1]
@@ -68,11 +76,14 @@ function download_extract
   end
   mkdir -p $argv[2]
   # xz
-  if test (string sub -s (math (string length $argv[1]) - 1) -l 2 $argv[1]) = "xz"
+  if test (last_chars 2 $argv[1]) = "xz"
     curl -fsSL $argv[1] | tar xfJ - -C $argv[2]
   # gzip
-  else if test (string sub -s (math (string length $argv[1]) - 1) -l 2 $argv[1]) = "gz"
+  else if test (last_chars 2 $argv[1]) = "gz"
     curl -fsSL $argv[1] | tar xfz - -C $argv[2]
+  # zip
+  else if test (last_chars 3 $argv[1]) = "zip"
+    curl -fsSL $argv[1] | unzip - -d $argv[2]
   # unknown
   else
     print "Download function received unexpected archive type!"
@@ -139,7 +150,7 @@ if not is_customized ~/.config/git/config
 end
 
 # remove unused files and dirs
-rm -rf -- ~/.bash_history ~/.bash_logout ~/.gitconfig ~/.var ~/.zshrc ~/Musik ~/Öffentlich ~/Vorlagen
+rm -rf -- ~/.bash_history ~/.bash_logout ~/.gitconfig ~/.zshrc ~/Musik ~/Öffentlich ~/Vorlagen
 
 # initialize fish config if never done before
 if not is_customized ~/.config/fish/config.fish
@@ -165,6 +176,14 @@ if is_command yay
   rm -rf -- ~/.cache/yay
 end
 
+if not is_command flatpak
+  print "=== Installing flatpak...  ==="
+  install_repo flatpak
+end
+
+print "=== Removing unused snaps...  ==="
+snap list --all | awk '/disabled/{print $1" --revision "$3}' | xargs -rn3 sudo snap remove
+
 # 'ls' alternative: https://lla.chaqchase.com/docs/about/introduction
 if not is_command lla
   print "=== Installing lla as 'ls' alternative... ==="
@@ -185,7 +204,39 @@ end
 # (for manual usage and required for zoom testing)
 if not is_command mtr
   print "=== Installing mtr... ==="
-  install-repo mtr
+  install_repo mtr
+end
+
+# open-source antivirus engine: https://www.clamav.net
+if not is_command clamd
+  print "=== Installing ClamAV... ==="
+  install_repo clamav
+  download_sudo https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/clamav/clamd.conf /etc/clamav/clamd.conf
+  download_sudo https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/clamav/freshclam.conf /etc/clamav/freshclam.conf
+  download_sudo https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/clamav/virus-event.sh /etc/clamav/virus-event.sh
+  sudo chmod 644 /etc/clamav/clamd.conf /etc/clamav/freshclam.conf
+  sudo touch /var/log/clamav/clamd.log /var/log/clamav/freshclam.log
+  sudo chmod 600 /var/log/clamav/clamd.log /var/log/clamav/freshclam.log
+  sudo chown clamav:clamav /var/log/clamav/clamd.log /var/log/clamav/freshclam.log
+  sudo chmod 555 /etc/clamav/virus-event.sh
+
+  sudo systemctl enable --now clamav-daemon.socket
+  sudo systemctl enable --now clamav-daemon
+  print "=== Updating ClamAV db via freshclam... ==="
+  sudo freshclam
+  sudo systemctl enable --now clamav-freshclam
+end
+
+if not is_command crontab
+  print "=== Installing cronie... ==="
+  install_repo cronie
+  sudo systemctl enable --now cronie
+end
+
+if not test (sudo crontab -l -u root | grep clamdscan)
+  print "=== Scheduling ClamAV scan of downloads folder ... ==="
+  echo "*/5 * * * * clamdscan --fdpass /home/niko/Downloads" > /tmp/crontab-append
+  sudo crontab -l -u root | cat - /tmp/crontab-append | sudo crontab -u root -
 end
 
 if test -e ~/.config/zoomus.conf
@@ -208,7 +259,7 @@ end
 # cool resources monitor: https://github.com/aristocratos/btop
 if not is_command btop
   print "=== Installing btop... ==="
-  install-repo btop
+  install_repo btop
 end
 if not test -e ~/.config/btop/btop.conf
   print "=== Installing btop configuration... ==="
@@ -306,7 +357,7 @@ fetch https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/mai
 # Arch Linux update helper: https://github.com/CachyOS/cachy-update
 if not is_command arch-update
   print "=== Installing and configuring arch-update (cachy-update)... ==="
-  install-repo cachy-update
+  install_repo cachy-update
   download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/cachy-update/arch-update.conf ~/.config/arch-update/arch-update.conf
   if test -f ~/.config/autostart/arch-update-tray.desktop
     rm ~/.config/autostart/arch-update-tray.desktop
@@ -315,10 +366,18 @@ if not is_command arch-update
   systemctl --user enable --now arch-update.timer
 end
 
+# audio effects: https://github.com/wwmm/easyeffects
+if not test (flatpak list | grep com.github.wwmm.easyeffects)
+  flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+  flatpak install flathub com.github.wwmm.easyeffects
+
+  download_extract https://download-directory.github.io/?url=https://github.com/cyb3rko/cachykde-handbook/tree/main/easyeffects/presets/input ~/.var/app/com.github.wwmm.easyeffects/data/easyeffects/input
+end
+
 # GitHub cli tool: https://cli.github.com/
 if not is_command gh
   print "=== Installing and setting up GitHub CLI... ==="
-  install-repo github-cli
+  install_repo github-cli
   gh auth login
 end
 
@@ -407,7 +466,7 @@ end
 # required for AppImages
 if not pacman -Q | grep -q fuse3
   print "=== Installing fuse3 to be able to use AppImages... ==="
-  install-repo fuse3
+  install_repo fuse3
 end
 
 # Bruno (HTTP client): https://usebruno.com
@@ -419,7 +478,7 @@ end
 # Gimp: https://www.gimp.org
 if not is_command gimp
   print "=== Installing Gimp... ==="
-  install-repo gimp
+  install_repo gimp
 end
 
 # JetBrains toolbox for JetBrains IDEs: https://www.jetbrains.com/toolbox-app/
@@ -464,7 +523,7 @@ else
   # device manager for Logitech devices: https://github.com/pwr-Solaar/Solaar
   if not is_command solaar
     print "=== Installing solaar... ==="
-    install-repo solaar
+    install_repo solaar
   end
   # configure autostart
   download_sudo https://raw.githubusercontent.com/pwr-Solaar/Solaar/refs/heads/master/share/autostart/solaar.desktop /etc/xdg/autostart/solaar.desktop
@@ -477,38 +536,38 @@ else
   # video editor: https://kdenlive.org
   if not is_command kdenlive
     print "=== Installing kdenlive... ==="
-    install-repo kdenlive
+    install_repo kdenlive
   end
 end
 
 # color picker: https://apps.kde.org/kcolorchooser
 if not is_command kcolorchooser
   print "=== Installing KColorChooser... ==="
-  install-repo kcolorchooser
+  install_repo kcolorchooser
 end
 
 # well, it's Signal
 if not is_command signal-desktop
   print "=== Installing Signal Desktop... ==="
-  install-repo signal-desktop
+  install_repo signal-desktop
 end
 
 # well, it's Element
 if not is_command element-desktop
   print "=== Installing Element Desktop... ==="
-  install-repo element-desktop
+  install_repo element-desktop
 end
 
 # disk usage analyzer tool
 if not is_command ncdu
   print "=== Installing ncdu... ==="
-  install-repo ncdu
+  install_repo ncdu
 end
 
 # helper to install Proton versions
 if not is_command protonplus
   print "=== Installing protonplus... ==="
-  install-repo protonplus
+  install_repo protonplus
 end
 
 # install KDE window open/close effects: https://github.com/Schneegans/Burn-My-Windows
@@ -517,7 +576,7 @@ download_extract https://github.com/Schneegans/Burn-My-Windows/releases/latest/d
 
 # rerate CachyOS mirrors
 if test -e ~/.cachymirrors
-  set reference_point (date -d "-3 weeks" +%s)
+  set reference_point (date -d "-2 weeks" +%s)
   set checkpoint (cat ~/.cachymirrors)
   if test $reference_point -lt $checkpoint
     print "=== Setup finished :) ==="

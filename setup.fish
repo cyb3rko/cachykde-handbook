@@ -220,8 +220,14 @@ if not is_command clamd
   sudo chown clamav:clamav /var/log/clamav/clamd.log /var/log/clamav/freshclam.log
   sudo chmod 555 /etc/clamav/virus-event.sh
 
+  print "=== Updating ClamAV db via freshclam... ==="
+  sudo freshclam
+  sudo systemctl enable --now clamav-freshclam
+
+  print "=== Starting ClamAV services... ==="
   sudo systemctl enable --now clamav-daemon.socket
   sudo systemctl enable --now clamav-daemon
+
   print "=== Updating ClamAV db via freshclam... ==="
   sudo freshclam
   sudo systemctl enable --now clamav-freshclam

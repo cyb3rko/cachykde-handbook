@@ -1,9 +1,13 @@
 {
-    "default-address-pools": [
-        {
-            "base": "172.16.0.0/16",
-            "size": 24
-        }
-    ],
-    "ipv6": true
+  "default-address-pools": [
+    {
+      "base": "172.16.0.0/16",
+      "size": 24
+    }
+  ],
+  "dns": ["1.1.1.1", "8.8.8.8"],
+  "features": {
+    "buildkit": true
+  },
+  "ipv6": true
 }

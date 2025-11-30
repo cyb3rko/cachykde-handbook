@@ -220,10 +220,6 @@ if not is_command clamd
   sudo chown clamav:clamav /var/log/clamav/clamd.log /var/log/clamav/freshclam.log
   sudo chmod 555 /etc/clamav/virus-event.sh
 
-  print "=== Updating ClamAV db via freshclam... ==="
-  sudo freshclam
-  sudo systemctl enable --now clamav-freshclam
-
   print "=== Starting ClamAV services... ==="
   sudo systemctl enable --now clamav-daemon.socket
   sudo systemctl enable --now clamav-daemon
@@ -539,6 +535,16 @@ else
   download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/solaar/config.yaml ~/.config/solaar/config.yaml
   download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/solaar/rules.yaml ~/.config/solaar/rules.yaml
   sudo udevadm control --reload-rules
+
+  # fan control: https://coolercontrol.org/
+  if not is_command coolercontrol
+    print "=== Installing coolercontrol... ==="
+    install_repo coolercontrol
+    sudo systemctl stop coolercontrold
+    download_sudo https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/coolercontrol/config.toml /etc/coolercontrol/config.toml
+    sudo systemctl start coolercontrold
+  end
+
   # video editor: https://kdenlive.org
   if not is_command kdenlive
     print "=== Installing kdenlive... ==="

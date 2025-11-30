@@ -171,6 +171,10 @@ sudo pacman -S fuse
 To apply preferences to Librewolf via the [browser/librewolf.overrides.cfg](browser/librewolf.overrides.cfg), store it at `~/.librewolf/`.  
 Restart the browser and find applied policies at `about:policies`.
 
+Remove all search engines and set Kagi as the search engine:
+- Name: Kagi
+- URL: https://kagi.com/search?q=%s&padding=67352d8d3f7f236da08ada274699fc4529fe2fff477da667ffa44832c831dbe8884b238bcb5a4365b03256870689b7a9ee9867352d8d3f7f236da08ada274699fc4529fe2fff477da667ffa44832c831dbe8884b238bcb5a4365b03256870689b7a9ee9867352d8d3f7f236da08ada274699fc4529fe2fff477da667ffa44832c831dbe8884b238bcb5a4365b03256870689b7a9ee9867352d8d3f7f236da08ada274699fc4529fe2fff477da667ffa44832c831dbe8884b238bcb5a4365b03256870689b7a9ee98&token=\<TOKEN>
+
 ### OneDrive
 
 Install [abraunegg/onedrive](https://github.com/abraunegg/onedrive) with the following components:

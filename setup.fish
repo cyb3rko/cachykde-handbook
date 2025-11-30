@@ -135,6 +135,8 @@ sudo ufw default deny routed | grep -v "^(be sure to"
 # configure ufw rules for KDE Connect
 sudo ufw allow 1714:1764/udp
 sudo ufw allow 1714:1764/tcp
+# configure ufw rule for wg
+sudo ufw allow 51821/udp
 sudo ufw enable
 
 if not test -e ~/.env
@@ -181,8 +183,10 @@ if not is_command flatpak
   install_repo flatpak
 end
 
-print "=== Removing unused snaps...  ==="
-snap list --all | awk '/disabled/{print $1" --revision "$3}' | xargs -rn3 sudo snap remove
+if is_command snap
+  print "=== Removing unused snaps...  ==="
+  snap list --all | awk '/disabled/{print $1" --revision "$3}' | xargs -rn3 sudo snap remove
+end
 
 # 'ls' alternative: https://lla.chaqchase.com/docs/about/introduction
 if not is_command lla
@@ -198,6 +202,12 @@ end
 if not test -e ~/.config/bat/config
   print "=== Installing bat configuration... ==="
   download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/bat/config ~/.config/bat/config
+end
+
+# Wireguard
+if not is_command wg
+  print "=== Installing Wireguard... ==="
+  install_repo wireguard-tools
 end
 
 # combined tracert and ping tool: https://github.com/traviscross/mtr
@@ -219,10 +229,6 @@ if not is_command clamd
   sudo chmod 600 /var/log/clamav/clamd.log /var/log/clamav/freshclam.log
   sudo chown clamav:clamav /var/log/clamav/clamd.log /var/log/clamav/freshclam.log
   sudo chmod 555 /etc/clamav/virus-event.sh
-
-  print "=== Updating ClamAV db via freshclam... ==="
-  sudo freshclam
-  sudo systemctl enable --now clamav-freshclam
 
   print "=== Starting ClamAV services... ==="
   sudo systemctl enable --now clamav-daemon.socket
@@ -344,7 +350,13 @@ download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/
 # backup browser: https://vivaldi.com
 if not is_command vivaldi
   print "=== Installing Vivaldi... ==="
-  install vivaldi
+  install_repo vivaldi
+end
+
+if is_command brave
+  print "=== Purging Brave... ==="
+  uninstall brave-bin
+  rm -rf -- ~/.config/BraveSoftware
 end
 
 # default editor: https://vscodium.com
@@ -370,6 +382,12 @@ if not is_command arch-update
   end
   arch-update --tray --enable
   systemctl --user enable --now arch-update.timer
+end
+
+# SSH terminal client: https://github.com/caelansar/termirs
+if not is_command termirs
+  print "=== Installing termirs... ==="
+  install termirs-git
 end
 
 # audio effects: https://github.com/wwmm/easyeffects
@@ -539,6 +557,16 @@ else
   download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/solaar/config.yaml ~/.config/solaar/config.yaml
   download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/solaar/rules.yaml ~/.config/solaar/rules.yaml
   sudo udevadm control --reload-rules
+
+  # fan control: https://coolercontrol.org/
+  if not is_command coolercontrol
+    print "=== Installing coolercontrol... ==="
+    install_repo coolercontrol
+    sudo systemctl stop coolercontrold
+    download_sudo https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/coolercontrol/config.toml /etc/coolercontrol/config.toml
+    sudo systemctl start coolercontrold
+  end
+
   # video editor: https://kdenlive.org
   if not is_command kdenlive
     print "=== Installing kdenlive... ==="

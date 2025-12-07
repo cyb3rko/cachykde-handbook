@@ -91,6 +91,14 @@ function download_extract
   end
 end
 
+function download_encrypted
+  if test (count $argv) -ne 2
+    print "Download function received not exact 2 params!"
+    exit 1
+  end
+  curl -fsSL $argv[1] | openssl enc -d -aes-256-cbc -out $argv[2] -pbkdf2 -iter 100000 -pass "file:$HOME/Dokumente/.universal_enc_key.txt"
+end
+
 function fetch
   if test (count $argv) -ne 1
     print "Fetch function received not exact 1 param!"
@@ -386,8 +394,9 @@ end
 
 # SSH terminal client: https://github.com/caelansar/termirs
 if not is_command termirs
-  print "=== Installing termirs... ==="
+  print "=== Installing and configuring termirs... ==="
   install termirs-git
+  download_encrypted https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/termirs/config.toml.enc ~/.config/termirs/config.toml
 end
 
 # audio effects: https://github.com/wwmm/easyeffects

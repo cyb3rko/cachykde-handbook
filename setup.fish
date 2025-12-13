@@ -34,7 +34,7 @@ function install
     print "Install function received not exact 1 param!"
     exit 1
   end
-  paru $argv[1]
+  paru --limit 20 $argv[1]
 end
 
 function install_repo
@@ -42,7 +42,15 @@ function install_repo
     print "Install_repo function received not exact 1 param!"
     exit 1
   end
-  paru --repo $argv[1]
+  paru --repo --limit 20 $argv[1]
+end
+
+function install_aur
+  if test (count $argv) -ne 1
+    print "Install_aur function received not exact 1 param!"
+    exit 1
+  end
+  paru --aur --limit 20 $argv[1]
 end
 
 function uninstall
@@ -379,6 +387,12 @@ print "=== Installing codium extensions... ==="
 # Save currently installed extensions with:
 # codium --list-extensions > vscodium/extensions.txt
 fetch https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/vscodium/extensions.txt | xargs -L 1 codium --install-extension
+
+# Cursor vibe-coding IDE: https://cursor.com
+if not is_command cursor
+  print "=== Installing Cursor ==="
+  install_repo cursor
+end
 
 # Arch Linux update helper: https://github.com/CachyOS/cachy-update
 if not is_command arch-update

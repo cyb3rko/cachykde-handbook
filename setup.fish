@@ -323,9 +323,19 @@ download_extract https://github.com/ful1e5/banana-cursor/releases/latest/downloa
 if test -d ~/.gnupg/
   if test -e ~/.gnupg/gpg.conf
     print "=== Configuring GPG agent... ==="
-    echo "enable-ssh-support" >> ~/.gnupg/gpg-agent.conf
-    echo "use-agent" >> ~/.gnupg/gpg.conf
+    if cat ~/.gnupg/gpg-agent.conf | not grep -q "enable-ssh-support"
+      echo "enable-ssh-support" >> ~/.gnupg/gpg-agent.conf
+    end
+    if cat ~/.gnupg/gpg.conf | not grep -q "use-agent"
+      echo "use-agent" >> ~/.gnupg/gpg.conf
+    end
     gpg-connect-agent reloadagent /bye
+    if not test -e ~/.ssh/nk_ed25519_sk_ol
+      download_encrypted https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/ssh/nk_ed25519_sk_ol.enc ~/.ssh/nk_ed25519_sk_ol
+    end
+    if not test -e ~/.ssh/nk_ed25519_sk_ol.pub
+      download_encrypted https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/ssh/nk_ed25519_sk_ol.pub.enc ~/.ssh/nk_ed25519_sk_ol.pub
+    end
   end
   print "=== Making sure GPG file permissions are correct... ==="
   chown -R $(whoami) ~/.gnupg/

@@ -104,6 +104,7 @@ function download_encrypted
     print "Download function received not exact 2 params!"
     exit 1
   end
+  mkdir -p (dirname $argv[2])
   curl -fsSL $argv[1] | openssl enc -d -aes-256-cbc -out $argv[2] -pbkdf2 -iter 100000 -pass "file:$HOME/Dokumente/.universal_enc_key.txt"
 end
 
@@ -168,7 +169,7 @@ if not is_customized ~/.config/git/config
 end
 
 # remove unused files and dirs
-rm -rf -- ~/.bash_history ~/.bash_logout ~/.gitconfig ~/.zshrc ~/Musik ~/Öffentlich ~/Vorlagen
+rm -rf -- ~/.bash_history ~/.bash_logout ~/.gitconfig ~/.viminfo ~/.wget-hsts ~/.zshrc ~/Musik ~/Öffentlich ~/Vorlagen
 
 # initialize fish config if never done before
 if not is_customized ~/.config/fish/config.fish
@@ -224,6 +225,13 @@ end
 if not is_command wg
   print "=== Installing Wireguard... ==="
   install_repo wireguard-tools
+end
+
+if test -e /etc/wireguard/wg0.conf
+  if not sudo systemctl status wg-quick@wg0.service | grep -q "wg-quick@.service; enabled;"
+    print "=== Configuring Wireguard auto-connect... ==="
+    sudo systemctl enable --now wg-quick@wg0.service
+  end
 end
 
 # combined tracert and ping tool: https://github.com/traviscross/mtr
@@ -408,10 +416,11 @@ end
 
 # SSH terminal client: https://github.com/caelansar/termirs
 if not is_command termirs
-  print "=== Installing and configuring termirs... ==="
+  print "=== Installing termirs... ==="
   install termirs-git
-  download_encrypted https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/termirs/config.toml.enc ~/.config/termirs/config.toml
 end
+print "=== Configuring termirs... ==="
+download_encrypted https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/termirs/config.toml.enc ~/.config/termirs/config.toml
 
 # audio effects: https://github.com/wwmm/easyeffects
 if not test (flatpak list | grep com.github.wwmm.easyeffects)
@@ -474,11 +483,19 @@ end
 
 # node package manager: https://pnpm.io
 if not is_command pnpm
-  print "=== Installing pnpm... ==="
-  execute https://get.pnpm.io/install.sh
+  print "=== Installing pnpm through corepack... ==="
+
+  if not is_command corepack
+    print "=== Installing corepack... ==="
+    install-repo corepack
+  end
+
+  print "=== Enabling pnpm... ==="
+  corepack enable pnpm
+  corepack prepare pnpm@latest --activate
 else
-  print "=== Self-updating pnpm... ==="
-  pnpm self-update | grep -v "^Nothing to stop."
+  print "=== Preparing newest pnpm through corepack... ==="
+  corepack prepare pnpm@latest --activate
 end
 
 # Linux onedrive sync client: https://github.com/abraunegg/onedrive
@@ -514,6 +531,24 @@ end
 if not pacman -Q | grep -q fuse3
   print "=== Installing fuse3 to be able to use AppImages... ==="
   install_repo fuse3
+end
+
+# components for maintaining AUR packages
+if not is_command nvchecker
+  print "=== Installing nvchecker... ==="
+  install_repo nvchecker
+  if test -e ~/.config/nvchecker/keyfile.toml
+    download "https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/nvchecker/keyfile.toml" ~/.config/nvchecker/keyfile.toml
+    chmod 600 ~/.config/nvchecker/keyfile.toml
+  end
+end
+if not is_command pkgctl
+  print "=== Installing AUR devtools... ==="
+  install_repo devtools
+end
+if not is_command namcap
+  print "=== Installing namcap... ==="
+  install_repo namcap
 end
 
 # Bruno (HTTP client): https://usebruno.com

@@ -133,7 +133,7 @@ function replace
     print "Replace function received not exact 3 params!"
     exit 1
   end
-  sed -i "s/$argv[2]/$argv[3]/g" $argv[1]
+  sudo sed -i "s/$argv[2]/$argv[3]/g" $argv[1]
 end
 
 trap handle_sigint SIGINT
@@ -155,6 +155,8 @@ sudo ufw allow 1714:1764/tcp
 # configure ufw rule for wg
 sudo ufw allow 51821/udp
 sudo ufw enable
+
+replace /etc/conf.d/wireless-regdom '#WIRELESS_REGDOM="DE"' 'WIRELESS_REGDOM="DE"'
 
 if not test -e ~/.env
   touch ~/.env
@@ -219,6 +221,13 @@ end
 if not test -e ~/.config/bat/config
   print "=== Installing bat configuration... ==="
   download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/bat/config ~/.config/bat/config
+end
+
+# CLI vibe coding IDE: https://opencode.ai/
+if not is_command opencode
+  print "=== Installing and configuring opencode... ==="
+  install_repo opencode
+  download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/opencode/opencode.json ~/.config/opencode/opencode.json
 end
 
 # Wireguard
@@ -321,21 +330,19 @@ print "=== Installing KDE Banana cursor (fun cursor)... ==="
 download_extract https://github.com/ful1e5/banana-cursor/releases/latest/download/banana-all.tar.xz ~/.icons
 
 if test -d ~/.gnupg/
-  if test -e ~/.gnupg/gpg.conf
-    print "=== Configuring GPG agent... ==="
-    if cat ~/.gnupg/gpg-agent.conf | not grep -q "enable-ssh-support"
-      echo "enable-ssh-support" >> ~/.gnupg/gpg-agent.conf
-    end
-    if cat ~/.gnupg/gpg.conf | not grep -q "use-agent"
-      echo "use-agent" >> ~/.gnupg/gpg.conf
-    end
-    gpg-connect-agent reloadagent /bye
-    if not test -e ~/.ssh/nk_ed25519_sk_ol
-      download_encrypted https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/ssh/nk_ed25519_sk_ol.enc ~/.ssh/nk_ed25519_sk_ol
-    end
-    if not test -e ~/.ssh/nk_ed25519_sk_ol.pub
-      download_encrypted https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/ssh/nk_ed25519_sk_ol.pub.enc ~/.ssh/nk_ed25519_sk_ol.pub
-    end
+  print "=== Configuring GPG agent... ==="
+  if not test -e ~/.gnupg/gpg.conf
+    download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/gnupg/gpg.conf ~/.gnupg/gpg.conf
+  end
+  if not test -e ~/.gnupg/gpg-agent.conf
+    download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/gnupg/gpg-agent.conf ~/.gnupg/gpg-agent.conf
+  end
+  gpg-connect-agent reloadagent /bye
+  if not test -e ~/.ssh/nk_ed25519_sk_ol
+    download_encrypted https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/ssh/nk_ed25519_sk_ol.enc ~/.ssh/nk_ed25519_sk_ol
+  end
+  if not test -e ~/.ssh/nk_ed25519_sk_ol.pub
+    download_encrypted https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/ssh/nk_ed25519_sk_ol.pub.enc ~/.ssh/nk_ed25519_sk_ol.pub
   end
   print "=== Making sure GPG file permissions are correct... ==="
   chown -R $(whoami) ~/.gnupg/
@@ -345,10 +352,26 @@ end
 
 # enable IPv6 privacy extensions: https://wiki.archlinux.org/title/IPv6#Privacy_extensions
 if test (grep -zoP "# Enable IPv6 Privacy Extensions\nnet.ipv6.conf.all.use_tempaddr = 2\nnet.ipv6.conf.default.use_tempaddr = 2" /etc/sysctl.d/40-ipv6.conf | wc -l) -ne 2
-  print "=== Configuring IPv6 privacy extensions"
+  print "=== Configuring IPv6 privacy extensions ==="
   echo "# Enable IPv6 Privacy Extensions
 net.ipv6.conf.all.use_tempaddr = 2
 net.ipv6.conf.default.use_tempaddr = 2" | sudo tee -a /etc/sysctl.d/40-ipv6.conf > /dev/null
+end
+
+# Configure Deadline I/O scheduler: https://wiki.cachyos.org/configuration/general_system_tweaks/#adios-io-scheduler
+if not test -e /etc/udev/rules.d/60-ioschedulers.rules
+  print "=== Configuring ADIOS I/O scheduler ==="
+  echo '# HDD
+ACTION=="add|change", KERNEL=="sd[a-z]*", ATTR{queue/rotational}=="1", \
+    ATTR{queue/scheduler}="bfq"
+
+# SSD
+ACTION=="add|change", KERNEL=="sd[a-z]*|mmcblk[0-9]*", ATTR{queue/rotational}=="0", \
+    ATTR{queue/scheduler}="adios"
+
+# NVMe SSD
+ACTION=="add|change", KERNEL=="nvme[0-9]*", ATTR{queue/rotational}=="0", \
+    ATTR{queue/scheduler}="adios"' | sudo tee -a /etc/udev/rules.d/60-ioschedulers.rules > /dev/null
 end
 
 if not is_customized /etc/ssh/ssh_config
@@ -356,6 +379,20 @@ if not is_customized /etc/ssh/ssh_config
   sudo cp /etc/ssh/ssh_config /etc/ssh/ssh_config.backup
   download_sudo https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/ssh/ssh_config /etc/ssh/ssh_config
 end
+
+if not test -e ~/.ssh/id_aur
+  print "=== Downloading AUR SSH key ==="
+  download_encrypted https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/ssh/id_aur.enc ~/.ssh/id_aur
+  download_encrypted https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/ssh/id_aur.pub.enc ~/.ssh/id_aur.pub
+end
+
+# SSH terminal client: https://github.com/caelansar/termirs
+if not is_command termirs
+  print "=== Installing termirs... ==="
+  install termirs-git
+end
+print "=== Configuring termirs... ==="
+download_encrypted https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/termirs/config.toml.enc ~/.config/termirs/config.toml
 
 # unused packages
 if is_command plasma-browser-integration-host
@@ -417,20 +454,12 @@ if not is_command arch-update
   print "=== Installing and configuring arch-update (cachy-update)... ==="
   install_repo cachy-update
   download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/cachy-update/arch-update.conf ~/.config/arch-update/arch-update.conf
-  if test -f ~/.config/autostart/arch-update-tray.desktop
+  if test -e ~/.config/autostart/arch-update-tray.desktop
     rm ~/.config/autostart/arch-update-tray.desktop
   end
   arch-update --tray --enable
   systemctl --user enable --now arch-update.timer
 end
-
-# SSH terminal client: https://github.com/caelansar/termirs
-if not is_command termirs
-  print "=== Installing termirs... ==="
-  install termirs-git
-end
-print "=== Configuring termirs... ==="
-download_encrypted https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/termirs/config.toml.enc ~/.config/termirs/config.toml
 
 # audio effects: https://github.com/wwmm/easyeffects
 if not test (flatpak list | grep com.github.wwmm.easyeffects)
@@ -467,7 +496,6 @@ if not is_command nitropy
   sudo mv 41-nitrokey.rules /etc/udev/rules.d/
   sudo chown root:root /etc/udev/rules.d/41-nitrokey.rules
   sudo chmod 644 /etc/udev/rules.d/41-nitrokey.rules
-  sudo udevadm control --reload-rules && sudo udevadm trigger
 end
 
 # automatically purge old files from trash: https://github.com/bneijt/autotrash
@@ -506,6 +534,12 @@ if not is_command pnpm
 else
   print "=== Preparing newest pnpm through corepack... ==="
   corepack prepare pnpm@latest --activate
+end
+
+# Linux cleaning tool: https://gitlab.com/cscs/maclean
+if not is_command maclean
+  print "=== Installing maclean... ==="
+  install_aur maclean-git
 end
 
 # Linux onedrive sync client: https://github.com/abraunegg/onedrive
@@ -602,7 +636,7 @@ if sudo dmidecode -s system-manufacturer | grep -qi "Tuxedo"
     install tuxedo-control-center-bin
     install tuxedo-webfai-creator-bin
   end
-  if not test -f ~/Dokumente/tuxedo/TCC_Profiles_Backup.json
+  if not test -e ~/Dokumente/tuxedo/TCC_Profiles_Backup.json
     print "=== Tuxedo - Fetching control center profiles... ==="
     download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/tuxedo/TCC_Profiles_Backup.json ~/Dokumente/tuxedo/TCC_Profiles_Backup.json
   end
@@ -624,7 +658,6 @@ else
   # update rules
   download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/solaar/config.yaml ~/.config/solaar/config.yaml
   download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/solaar/rules.yaml ~/.config/solaar/rules.yaml
-  sudo udevadm control --reload-rules
 
   # fan control: https://coolercontrol.org/
   if not is_command coolercontrol
@@ -675,6 +708,9 @@ end
 # install KDE window open/close effects: https://github.com/Schneegans/Burn-My-Windows
 print "=== Installing KDE window open/close effects... ==="
 download_extract https://github.com/Schneegans/Burn-My-Windows/releases/latest/download/burn_my_windows_kwin6.tar.gz ~/.local/share/kwin/effects
+
+# Reload udev rules
+sudo udevadm control --reload-rules && sudo udevadm trigger
 
 # rerate CachyOS mirrors
 if test -e ~/.cachymirrors

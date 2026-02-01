@@ -1,0 +1,28 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "theme": "cobalt2",
+  "autoupdate": false,
+  "disabled_providers": [
+    "alibaba",
+    "alibaba-cn",
+    "amazon-bedrock",
+    "azure",
+    "azure-cognitive-services",
+    "cloudflare-ai-gateway",
+    "cloudflare-workers-ai",
+    "deepseek",
+    "minimax-cn",
+    "minimax-cn-coding-plan",
+    "moonshotai-cn",
+    "nvidia",
+    "sap-ai-core",
+    "siliconflow-cn",
+    "v0",
+    "vercel",
+    "xai",
+    "xiaomi",
+    "zai",
+    "zhipuai",
+    "zhipuai-coding-plan"
+  ]
+}

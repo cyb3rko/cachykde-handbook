@@ -207,6 +207,12 @@ if is_command snap
   snap list --all | awk '/disabled/{print $1" --revision "$3}' | xargs -rn3 sudo snap remove
 end
 
+if not is_command ghostty
+  print "=== Installing ghostty...  ==="
+  install_repo ghostty
+  download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/ghostty/config ~/.config/ghostty/config
+end
+
 # 'ls' alternative: https://lla.chaqchase.com/docs/about/introduction
 if not is_command lla
   print "=== Installing lla as 'ls' alternative... ==="
@@ -398,6 +404,10 @@ download_encrypted https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/r
 if is_command plasma-browser-integration-host
   print "=== Removing 'plasma-browser-integration-host'... ==="
   uninstall plasma-browser-integration
+end
+if is_command kitty
+  print "=== Removing 'kitty'... ==="
+  uninstall kitty
 end
 
 if not pacman -Q ttf-twemoji-color > /dev/null 2>&1

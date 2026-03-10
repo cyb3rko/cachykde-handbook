@@ -10,6 +10,7 @@
 !.cache/*
 !node_modules/*
 !.next/*
+!public/flags/*
 !generated/prisma/*
 !/Programming/Projects/Android/**/build/*
 !/Programming/Projects/Android/**/.cxx/*

@@ -7,10 +7,13 @@ function setabbreviations
   alias cat="bat"
   alias cachy-update="arch-update"
   alias code="codium"
+  alias nano="micro"
 
   abbr wsensor "watch -d -n 1 sensors"
   abbr dns-restart "sudo systemctl restart systemd-resolved"
   abbr git-repo "xdg-open $(git remote get-url origin 2>/dev/null) >/dev/null 2>&1"
+  alias sync "rclone bisync Filen.io: ~/Filen/ --checkers 16 --transfers 8 --fast-list --check-access --links --remove-empty-dirs --exclude-from ~/.config/rclone/EXCLUDE_LIST.txt --progress"
+  alias resync "rclone bisync Filen.io: ~/Filen/ --verbose --checkers 16 --transfers 8 --fast-list --check-access --links --remove-empty-dirs --exclude-from ~/.config/rclone/EXCLUDE_LIST.txt --progress --resync"
 
   abbr jump "ssh root@jump.langen.cyb3rko"
   abbr oci-main "ssh niko@oci-main.cloud.cyb3rko"

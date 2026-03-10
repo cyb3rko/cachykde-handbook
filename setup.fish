@@ -521,6 +521,12 @@ if not is_command pre-commit
   pre-commit --version
 end
 
+# all-in-one JavaScript runtime: https://bun.com
+if not is_command bun
+  print "=== Installing bun... ==="
+  install_repo bun
+end
+
 # node version manager: https://github.com/nvm-sh/nvm
 if not is_function nvm
   print "=== Installing nvm and Node... ==="
@@ -550,6 +556,15 @@ end
 if not is_command maclean
   print "=== Installing maclean... ==="
   install_aur maclean-git
+end
+
+# rclone sync client: https://rclone.org
+if not is_command rclone
+  print "=== Installing rclone... ==="
+  install_repo rclone
+  mkdir ~/Filen
+  download_encrypted https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/rclone/rclone.conf.enc ~/.config/rclone/rclone.conf
+  download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/rclone/EXCLUDE_LIST.txt ~/.config/rclone/EXCLUDE_LIST.txt
 end
 
 # Linux onedrive sync client: https://github.com/abraunegg/onedrive
@@ -733,6 +748,7 @@ if test -e ~/.cachymirrors
 end
 print "=== Rating CachyOS mirrors... ==="
 sudo cachyos-rate-mirrors | grep -v "^Server = "
+sudo pacman-key --refresh-keys
 set current_stamp (date +%s)
 echo $current_stamp > ~/.cachymirrors
 print "=== Setup finished :) ==="

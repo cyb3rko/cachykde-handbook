@@ -2,7 +2,7 @@
 
 System info: CachyOS + KDE Plasma Wayland + fish shell
 
-<a href="https://cachyos.org/"><img src="https://cachyos.org/_astro/logo.DVTdAJi6.svg" width="100"/></a> &emsp;
+<a href="https://cachyos.org/"><img src="https://cachyos.org/_astro/logo.DuMERIP6.svg" width="100"/></a> &emsp;
 <a href="https://kde.org/plasma-desktop"><img src="https://kde.org/stuff/clipart/logo/plasma-logo-colorful.svg" width="100"/></a> &emsp;
 <a href="https://wayland.freedesktop.org"><img src="https://upload.wikimedia.org/wikipedia/commons/9/99/Wayland_Logo.svg" width="100"/></a> &emsp;
 <a href="https://fishshell.com"><img src="https://avatars.githubusercontent.com/u/1828073" width="100"/></a>
@@ -19,7 +19,7 @@ System info: CachyOS + KDE Plasma Wayland + fish shell
   - [SSH](#ssh)
   - [Java](#java)
   - [GPG](#gpg)
-- [Desktop](#desktop)
+- [Theming](#theming)
   - [System Tray](#system-tray)
 - [Applications](#applications)
   - [AppImages](#appimages)
@@ -140,7 +140,16 @@ find ~/.gnupg -type f -exec chmod 600 {} \;
 find ~/.gnupg -type d -exec chmod 700 {} \;
 ```
 
-## Desktop
+## Theming
+
+- Global theme: `Breeze Dark`  
+- Color theme: `Gradient-Dark-ColorScheme-V-2` (https://github.com/L4ki/Gradient-Plasma-Themes)  
+- Application theme: `Breeze`  
+- Plasma theme: `Gradient-Dark-Plasma` (https://github.com/L4ki/Gradient-Plasma-Themes)  
+- Window decorations: `Breeze`  
+- Icons: `Gradient-Dark-Icons` (https://github.com/L4ki/Gradient-Plasma-Themes)  
+- Cursor: `Bibata-Modern-Ice` (https://github.com/ful1e5/Bibata_Cursor)  
+- Sounds: `FreeDesktop`
 
 ### System Tray
 
@@ -240,5 +249,5 @@ Configuration:
 ### Import CA
 
 1. Run `sudo trust anchor ca-file.pem`
-2. Check import with `ls /etc/ca-certificates/trust-source` and `trust list` (to grep e.g. 'Cyb3rKo' in CA list, use `trust list | grep -iB 5 Cyb3rKo`)
+2. Check import with `ls /etc/ca-certificates/trust-source` and `trust list` (to grep e.g. 'Cyb3rKo' in CA list, use `trust list | rg -iB 2 Cyb3rKo`)
 3. [Test TLS connection with `openssl s_client -connect <host>:443`]

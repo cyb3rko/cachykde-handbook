@@ -158,6 +158,11 @@ sudo ufw enable
 
 replace /etc/conf.d/wireless-regdom '#WIRELESS_REGDOM="DE"' 'WIRELESS_REGDOM="DE"'
 
+# Speed up boot
+sudo systemctl disable NetworkManager-wait-online
+# Mirror rating is done separately
+sudo systemctl disable cachyos-rate-mirrors.timer
+
 if not test -e ~/.env
   touch ~/.env
 end
@@ -235,6 +240,14 @@ if not is_command opencode
   install_repo opencode
   download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/opencode/opencode.json ~/.config/opencode/opencode.json
 end
+
+# Agent tooling proxy for reduzing context bloat: https://github.com/rtk-ai/rtk
+if not is_command rtk
+  print "=== Installing rtk... ==="
+  install_aur rtk
+end
+print "=== Hooking rtk into OpenCode... ==="
+rtk init -g --opencode
 
 # Wireguard
 if not is_command wg

@@ -2,21 +2,56 @@
   "$schema": "https://opencode.ai/config.json",
   "theme": "cobalt2",
   "autoupdate": false,
+  "mcp": {
+    "olymplabs": {
+      "type": "remote",
+      "url": "http://localhost:8080/mcp",
+      "enabled": true
+    },
+    "supabase": {
+      "type": "remote",
+      "url": "https://mcp.supabase.com/mcp?project_ref=siuooizccgqqmxazymru&features=database%2Cdocs",
+      "enabled": true
+    }
+  },
+  "plugin": [
+    "opencode-smart-voice-notify@latest",
+    "@tarquinen/opencode-dcp@latest"
+  ],
+  "provider": {
+  	"zai-coding-plan": {
+      "models": {
+  	    "glm-5": {
+  	      "limit": {
+  	        "context": 95000,
+  	        "output": 8192
+  	      }
+  	    }
+  	  }
+  	}
+  },
   "disabled_providers": [
     "alibaba",
     "alibaba-cn",
     "amazon-bedrock",
     "azure",
     "azure-cognitive-services",
+    "bailing",
     "cloudflare-ai-gateway",
     "cloudflare-workers-ai",
     "deepseek",
+    "iflowcn",
+    "jiekou",
     "minimax-cn",
     "minimax-cn-coding-plan",
+    "modelscope",
     "moonshotai-cn",
     "nvidia",
+    "ovhcloud",
+    "poe",
     "sap-ai-core",
     "siliconflow-cn",
+    "upstage",
     "v0",
     "vercel",
     "xai",

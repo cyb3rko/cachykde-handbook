@@ -490,6 +490,7 @@ if not test (flatpak list | grep com.github.wwmm.easyeffects)
   flatpak install flathub com.github.wwmm.easyeffects
 
   download_extract https://download-directory.github.io/?url=https://github.com/cyb3rko/cachykde-handbook/tree/main/easyeffects/presets/input ~/.var/app/com.github.wwmm.easyeffects/data/easyeffects/input
+  download_extract https://download-directory.github.io/?url=https://github.com/cyb3rko/cachykde-handbook/tree/main/easyeffects/presets/output ~/.var/app/com.github.wwmm.easyeffects/data/easyeffects/output
 end
 
 # GitHub cli tool: https://cli.github.com/

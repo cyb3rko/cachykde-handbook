@@ -466,12 +466,6 @@ print "=== Installing codium extensions... ==="
 # codium --list-extensions > vscodium/extensions.txt
 fetch https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/vscodium/extensions.txt | xargs -L 1 codium --install-extension
 
-# Cursor vibe-coding IDE: https://cursor.com
-if not is_command cursor
-  print "=== Installing Cursor ==="
-  install_repo cursor
-end
-
 # Arch Linux update helper: https://github.com/CachyOS/cachy-update
 if not is_command arch-update
   print "=== Installing and configuring arch-update (cachy-update)... ==="
@@ -577,6 +571,7 @@ if not is_command rclone
   print "=== Installing rclone... ==="
   install_repo rclone
   mkdir ~/Filen
+  touch ~/Filen/RCLONE_TEST
   download_encrypted https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/rclone/rclone.conf.enc ~/.config/rclone/rclone.conf
   download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/rclone/EXCLUDE_LIST.txt ~/.config/rclone/EXCLUDE_LIST.txt
 end
@@ -608,6 +603,7 @@ if not is_command docker
   if not grep -q $docker_host $env_path
     echo $docker_host >> $env_path
   end
+  install_repo docker-buildx
 end
 
 # required for AppImages

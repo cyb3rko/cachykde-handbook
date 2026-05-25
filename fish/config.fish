@@ -8,6 +8,7 @@ function setabbreviations
   alias cachy-update="arch-update"
   alias code="codium"
   alias nano="micro"
+  alias sshs="sshs --config ~/.ssh/config"
 
   abbr wsensor "watch -d -n 1 sensors"
   abbr dns-restart "sudo systemctl restart systemd-resolved"

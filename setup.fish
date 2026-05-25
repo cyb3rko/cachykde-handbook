@@ -156,6 +156,15 @@ sudo ufw allow 1714:1764/tcp
 sudo ufw allow 51821/udp
 sudo ufw enable
 
+# run driver auto-install
+chwd -a
+
+# configure fprint enrollment rules
+if not sudo test -e /etc/polkit-1/rules.d/50-net.reactivated.fprint.device.enroll.rules
+  print "=== Configuring fprint enrollment rules... ==="
+  download_sudo https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/fprint/50-net.reactivated.fprint.device.enroll.rules /etc/polkit-1/rules.d/50-net.reactivated.fprint.device.enroll.rules
+end
+
 replace /etc/conf.d/wireless-regdom '#WIRELESS_REGDOM="DE"' 'WIRELESS_REGDOM="DE"'
 
 # Speed up boot
@@ -303,6 +312,11 @@ if not test (sudo crontab -l -u root | grep clamdscan)
   sudo crontab -l -u root | cat - /tmp/crontab-append | sudo crontab -u root -
 end
 
+if not is_command kamoso
+  print "=== Installing Kamoso... ==="
+  install_repo kamoso
+end
+
 if test -e ~/.config/zoomus.conf
   print "=== Configuring Zoom client... ==="
   replace ~/.config/zoomus.conf "autoPlayGif=false" "autoPlayGif=true"
@@ -324,6 +338,10 @@ end
 if not is_command btop
   print "=== Installing btop... ==="
   install_repo btop
+  if lspci -nn | grep -E 'VGA|3D' | string match -qi '*AMD*'
+    print "=== AMD GPU detected, installing rocm-smi... ==="
+    install_repo rocm-smi
+  end
 end
 if not test -e ~/.config/btop/btop.conf
   print "=== Installing btop configuration... ==="
@@ -357,12 +375,6 @@ if test -d ~/.gnupg/
     download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/gnupg/gpg-agent.conf ~/.gnupg/gpg-agent.conf
   end
   gpg-connect-agent reloadagent /bye
-  if not test -e ~/.ssh/nk_ed25519_sk_ol
-    download_encrypted https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/ssh/nk_ed25519_sk_ol.enc ~/.ssh/nk_ed25519_sk_ol
-  end
-  if not test -e ~/.ssh/nk_ed25519_sk_ol.pub
-    download_encrypted https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/ssh/nk_ed25519_sk_ol.pub.enc ~/.ssh/nk_ed25519_sk_ol.pub
-  end
   print "=== Making sure GPG file permissions are correct... ==="
   chown -R $(whoami) ~/.gnupg/
   find ~/.gnupg/ -type f -exec chmod 600 {} \; # Owner read/write (600) for files
@@ -399,19 +411,34 @@ if not is_customized /etc/ssh/ssh_config
   download_sudo https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/ssh/ssh_config /etc/ssh/ssh_config
 end
 
+print "=== Configuring SSH connections configuration... ==="
+download_encrypted https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/ssh/config.enc ~/.ssh/config
+
+print "=== Setting up SSH keys... ==="
 if not test -e ~/.ssh/id_aur
-  print "=== Downloading AUR SSH key ==="
   download_encrypted https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/ssh/id_aur.enc ~/.ssh/id_aur
   download_encrypted https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/ssh/id_aur.pub.enc ~/.ssh/id_aur.pub
 end
-
-# SSH terminal client: https://github.com/caelansar/termirs
-if not is_command termirs
-  print "=== Installing termirs... ==="
-  install termirs-git
+if not test -e ~/.ssh/id_ed25519_hetzner
+  download_encrypted https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/ssh/id_ed25519_hetzner.enc ~/.ssh/id_ed25519_hetzner
+  download_encrypted https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/ssh/id_ed25519_hetzner.pub.enc ~/.ssh/id_ed25519_hetzner.pub
 end
-print "=== Configuring termirs... ==="
-download_encrypted https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/termirs/config.toml.enc ~/.config/termirs/config.toml
+if not test -e ~/.ssh/id_ed25519
+  download_encrypted https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/ssh/id_ed25519.enc ~/.ssh/id_ed25519
+  download_encrypted https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/ssh/id_ed25519.pub.enc ~/.ssh/id_ed25519.pub
+end
+if not test -e ~/.ssh/nk_ed25519_sk_ol
+  download_encrypted https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/ssh/nk_ed25519_sk_ol.enc ~/.ssh/nk_ed25519_sk_ol
+end
+if not test -e ~/.ssh/nk_ed25519_sk_ol.pub
+  download_encrypted https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/ssh/nk_ed25519_sk_ol.pub.enc ~/.ssh/nk_ed25519_sk_ol.pub
+end
+
+# SSH connection manager: https://github.com/quantumsheep/sshs
+if not is_command sshs
+  print "=== Installing sshs... ==="
+  install_repo sshs
+end
 
 # unused packages
 if is_command plasma-browser-integration-host
@@ -421,6 +448,15 @@ end
 if is_command kitty
   print "=== Removing 'kitty'... ==="
   uninstall kitty
+end
+if is_command termirs
+  print "=== Removing 'termirs'... ==="
+  uninstall termirs-git
+end
+if is_command coolercontrol
+  print "=== Removing 'coolercontrol'... ==="
+  sudo systemctl disable --now coolercontrold
+  uninstall coolercontrol
 end
 
 if not pacman -Q ttf-twemoji-color > /dev/null 2>&1
@@ -451,6 +487,11 @@ if is_command brave
   print "=== Purging Brave... ==="
   uninstall brave-bin
   rm -rf -- ~/.config/BraveSoftware
+end
+
+# nano alternative: https://micro-editor.github.io
+if not test -e ~/.config/micro/settings.json
+  download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/micro/settings.json ~/.config/micro/settings.json
 end
 
 # default editor: https://vscodium.com
@@ -485,6 +526,7 @@ if not test (flatpak list | grep com.github.wwmm.easyeffects)
 
   download_extract https://download-directory.github.io/?url=https://github.com/cyb3rko/cachykde-handbook/tree/main/easyeffects/presets/input ~/.var/app/com.github.wwmm.easyeffects/data/easyeffects/input
   download_extract https://download-directory.github.io/?url=https://github.com/cyb3rko/cachykde-handbook/tree/main/easyeffects/presets/output ~/.var/app/com.github.wwmm.easyeffects/data/easyeffects/output
+  download_extract https://download-directory.github.io/?url=https://github.com/cyb3rko/cachykde-handbook/tree/main/easyeffects/autoload/output ~/.var/app/com.github.wwmm.easyeffects/data/easyeffects/autoload/output
 end
 
 # GitHub cli tool: https://cli.github.com/
@@ -514,13 +556,6 @@ if not is_command nitropy
   sudo mv 41-nitrokey.rules /etc/udev/rules.d/
   sudo chown root:root /etc/udev/rules.d/41-nitrokey.rules
   sudo chmod 644 /etc/udev/rules.d/41-nitrokey.rules
-end
-
-# automatically purge old files from trash: https://github.com/bneijt/autotrash
-if not is_command autotrash
-  print "=== Installing and configuring autotrash... ==="
-  uv tool install autotrash
-  autotrash -d 40 --install
 end
 
 if not is_command pre-commit
@@ -694,13 +729,20 @@ else
   download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/solaar/config.yaml ~/.config/solaar/config.yaml
   download https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/solaar/rules.yaml ~/.config/solaar/rules.yaml
 
-  # fan control: https://coolercontrol.org/
-  if not is_command coolercontrol
-    print "=== Installing coolercontrol... ==="
-    install_repo coolercontrol
-    sudo systemctl stop coolercontrold
-    download_sudo https://raw.githubusercontent.com/cyb3rko/cachykde-handbook/refs/heads/main/coolercontrol/config.toml /etc/coolercontrol/config.toml
-    sudo systemctl start coolercontrold
+  # Radeon control: https://github.com/ilya-zlobintsev/LACT
+  if not is_command lact
+    print "=== Installing LACT... ==="
+    install_repo LACT
+    sudo systemctl enable --now lactd
+  end
+  # ensure Radeon unlock
+  set AMD_FEATURE_MASK "amdgpu.ppfeaturemask=0xffffffff"
+  if not sudo grep "KERNEL_CMDLINE\[default\]" /etc/default/limine | string match -q "*$AMD_FEATURE_MASK*"
+    print "=== Unlocking Raedon GPU... ==="
+    set line (sudo grep "KERNEL_CMDLINE\[default\]" /etc/default/limine)
+    set stripped (string replace -r '"$' '' $line)
+    replace /etc/default/limine "$line" "$stripped $AMD_FEATURE_MASK\""
+    sudo limine-mkinitcpio
   end
 
   # video editor: https://kdenlive.org

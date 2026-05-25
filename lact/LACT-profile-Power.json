@@ -1,0 +1,1 @@
+{"gpus":{"1002:7550-1DA2:3490-0000:28:00.0":{"fan_control_enabled":false,"power_cap":317.0,"performance_level":"high"}},"rule":{"type":"process","filter":{"name":"steam.exe"}}}

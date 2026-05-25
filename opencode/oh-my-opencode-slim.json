@@ -1,0 +1,65 @@
+{
+  "$schema": "https://unpkg.com/oh-my-opencode-slim@latest/oh-my-opencode-slim.schema.json",
+  "preset": "zai-coding-plan",
+  "presets": {
+    "zai-coding-plan": {
+      "orchestrator": {
+        "model": "zai-coding-plan/glm-5.1",
+        "skills": [
+          "*"
+        ],
+        "mcps": [
+          "*",
+          "!context7"
+        ]
+      },
+      "oracle": {
+        "model": "zai-coding-plan/glm-5.1",
+        "variant": "max",
+        "skills": [
+          "simplify"
+        ],
+        "mcps": []
+      },
+      "council": {
+        "model": "zai-coding-plan/glm-4.7",
+        "variant": "high",
+        "skills": [],
+        "mcps": []
+      },
+      "librarian": {
+        "model": "zai-coding-plan/glm-5-turbo",
+        "skills": [],
+        "mcps": [
+          "websearch",
+          "context7",
+          "grep_app"
+        ]
+      },
+      "explorer": {
+        "model": "zai-coding-plan/glm-5-turbo",
+        "skills": [],
+        "mcps": []
+      },
+      "designer": {
+        "model": "zai-coding-plan/glm-4.7",
+        "variant": "medium",
+        "skills": [
+          "agent-browser"
+        ],
+        "mcps": []
+      },
+      "fixer": {
+        "model": "zai-coding-plan/glm-5-turbo",
+        "variant": "high",
+        "skills": [],
+        "mcps": []
+      },
+      "observer": {
+        "model": "zai-coding-plan/glm-4.7",
+        "skills": [],
+        "mcps": []
+      }
+    }
+  }
+}

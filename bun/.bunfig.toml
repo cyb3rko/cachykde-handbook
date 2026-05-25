@@ -1,0 +1,12 @@
+telemetry = false
+
+[install]
+# Only install package versions published at least 1 day ago
+minimumReleaseAge = 86400
+
+[install.security]
+# Scan packages for vulnerabilities before installation
+scanner = "@socketsecurity/bun-security-scanner"
+
+[run]
+noOrphans = true

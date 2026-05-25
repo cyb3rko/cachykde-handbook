@@ -1,0 +1,1 @@
+{"gpus":{"1002:7550-1DA2:3490-0000:28:00.0":{"fan_control_enabled":true,"fan_control_settings":{"mode":"curve","static_speed":0.5,"temperature_key":"edge","interval_ms":500,"curve":{"40":0.3,"50":0.35,"60":0.5,"70":0.75,"80":1.0},"spindown_delay_ms":5000,"change_threshold":2},"pmfw_options":{"zero_rpm":true},"power_cap":317.0,"performance_level":"auto"}}}

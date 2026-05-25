@@ -1,0 +1,22 @@
+{
+  "autosu": true,
+  "colorcolumn": 100,
+  "detectlimit": 1000,
+  "diffgutter": true,
+  "hltaberrors": true,
+  "hltrailingws": true,
+  "keymenu": true,
+  "mkparents": true,
+  "rmtrailingws": true,
+  "scrollbar": true,
+  "scrollmargin": 10,
+  "scrollspeed": 1,
+  "tabsize": 2,
+  "tabstospaces": true,
+  "ft:go": {
+    "tabstospaces": false
+  },
+  "ft:md": {
+    "rmtrailingws": false
+  }
+}
